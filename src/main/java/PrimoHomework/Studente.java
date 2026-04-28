@@ -22,5 +22,27 @@ public class Studente extends Utente {
         return matricola;
     }
 
-    
+    public boolean aggiungiTesi(Richiesta r,char stato,String contenuto){
+        if (richieste.contains(r)){
+            Tesi t =new Tesi(stato,contenuto);
+            r.setTesi(t);
+            return true;
+        }
+        return false;
+    }
+    public boolean aggiornaTesi(Richiesta r,String contenuto){
+        Tesi t=r.getTesi();
+        if (richieste.contains(r)&&t!=null){
+            t.setContenuto(contenuto);
+            Tesi.setStato('?');
+            return true;
+        }
+        return false;
+    }
+    public void visualizzaRichiesta(Richiesta r){
+        if(richieste.contains(r)){
+            System.out.println("Stato richiesta: "+r.getStato());
+        }
+    }
+
 }

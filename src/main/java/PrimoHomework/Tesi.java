@@ -3,18 +3,17 @@ package PrimoHomework;
 public class Tesi {
     private char stato;
     private String contenuto;
-    private Seduta seduta;
+    private Seduta seduta=null;
 
-    public Tesi(char stato, String contenuto, Seduta seduta){
+    public Tesi(char stato, String contenuto){
         this.stato = stato;
         this.contenuto = contenuto;
-        this.seduta = seduta;
     }
 
     public char getStato() {
         return stato;
     }
-    public static void setStato(char stato) {
+    public void setStato(char stato) {
         this.stato = stato;
     }
     public String getContenuto() {
