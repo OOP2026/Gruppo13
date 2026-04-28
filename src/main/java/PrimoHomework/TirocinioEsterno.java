@@ -9,4 +9,12 @@ public class TirocinioEsterno extends Tirocinio{
         this.nomeAzienda = nomeAzienda;
         this.referente = referente;
     }
+
+    public String getNomeAzienda() {
+        return nomeAzienda;
+    }
+
+    public String getReferente() {
+        return referente;
+    }
 }
