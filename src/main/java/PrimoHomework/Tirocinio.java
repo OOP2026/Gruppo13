@@ -12,5 +12,5 @@ public class Tirocinio {
     public String getNome() {return this.nome;}
     public String getDescrizione() {return this.descrizione;}
     public Docente getRelatore(){return this.relatore;}
-    
+
 }
