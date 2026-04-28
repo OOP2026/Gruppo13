@@ -14,7 +14,7 @@ public class Tesi {
     public char getStato() {
         return stato;
     }
-    public void setStato(char stato) {
+    public static void setStato(char stato) {
         this.stato = stato;
     }
     public String getContenuto() {
