@@ -6,7 +6,7 @@ public class Utente {
     protected String password;
     protected String login;
     protected String email;
-    protected Boolean loggedin = false;
+    protected boolean loggedin = false;
 
     public Utente(String nome, String cognome, String password, String login,String  email){
             this.nome = nome;
@@ -22,17 +22,18 @@ public class Utente {
         }
     }
 
-    public void setUsername(){
+    public void setUsername(String login){
         if (loggedin){
             this.login = login;
         }
     }
 
     public void logIn(String email, String password) {
-        if ((email == this.email) && (password == this.password)) {
+        if (email.equals(this.email) && password.equals(this.password)) {
             loggedin = true;
             System.out.println("Sei loggato");
-        } else {
+        }
+        else {
             System.out.println("Credenziali sbagliate");
         }
     }

@@ -2,20 +2,20 @@ package PrimoHomework;
 import java.util.ArrayList;
 
 public class Docente extends Utente{
-    protected Boolean coordinatore;
+    protected boolean coordinatore;
 
     protected ArrayList<Tirocinio> Tirocini = new ArrayList<>();
 
-    public Docente(String nome, String cognome, String password, String login,String  email, Boolean coordinatore){
+    public Docente(String nome, String cognome, String password, String login,String  email, boolean coordinatore){
         super(nome, cognome, password, login, email);
         this.coordinatore = coordinatore;
     }
     public void accettaTesi(Tesi t){
-        Tesi.setStato('V');
+        t.setStato('V');
     }
 
     public void rifiutaTesi(Tesi t){
-        Tesi.setStato('X');
+        t.setStato('X');
     }
 
     public Tirocinio aggiungiTirocinio(String nome, String descrizione){
@@ -31,7 +31,7 @@ public class Docente extends Utente{
     public Boolean isCoordinatore(){
         return coordinatore;
     }
-    public ArrayList<Tirocini> visualizzaTirocini{
+    public ArrayList<Tirocinio> visualizzaTirocini(){
         return Tirocini;
     }
     

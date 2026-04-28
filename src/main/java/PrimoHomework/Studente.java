@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Studente extends Utente {
     private String matricola;
-    private ArrayList<Richiesta> richieste = new ArrayList<Richiesta>();
+    private ArrayList<Richiesta> richieste = new ArrayList<>();
 
     public Studente(String nome, String cognome, String password, String login, String email, String matricola) {
         super(nome, cognome, password, login, email);
@@ -34,7 +34,7 @@ public class Studente extends Utente {
         Tesi t=r.getTesi();
         if (richieste.contains(r)&&t!=null){
             t.setContenuto(contenuto);
-            Tesi.setStato('?');
+            t.setStato('?');
             return true;
         }
         return false;
