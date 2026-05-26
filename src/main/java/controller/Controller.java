@@ -69,7 +69,7 @@ public class Controller {
 	}
 
 	public boolean faiRichiesta(Studente studente,Tirocinio tirocinio){
-		Richiesta r=studente.faiRichiesta("?", Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()),tirocinio);
+		Richiesta r=studente.faiRichiesta("?", Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()),tirocinio);
 		//integrità con DB
 		//if(DBApprovaModifica)
 		richieste.add(r);
