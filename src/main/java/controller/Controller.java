@@ -3,6 +3,7 @@ import model.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class Controller {
@@ -42,7 +43,7 @@ public class Controller {
 		}
 		return s;
 	}
-	public ArrayList<Tirocinio> GetTirocini(Utente user,isDocente){
+	public ArrayList<Tirocinio> GetTirocini(Utente user,boolean isDocente){
 		ArrayList<Tirocinio> t=new ArrayList<>();
 		for(Tirocinio x:tirocini){
 			if(!isDocente||x.getRelatore().equals(user))
@@ -86,8 +87,6 @@ public class Controller {
 		}
 		return r;
 	}
-
-	public
 
 
 }
