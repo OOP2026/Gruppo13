@@ -1,4 +1,5 @@
 package controller;
+import jdk.vm.ci.meta.Local;
 import model.*;
 
 import java.time.*;
@@ -69,7 +70,7 @@ public class Controller {
 	}
 
 	public boolean faiRichiesta(Studente studente,Tirocinio tirocinio){
-		Richiesta r=studente.faiRichiesta("?", Date.from(LocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()),tirocinio);
+		Richiesta r=studente.faiRichiesta("?", Date.from(LocalDate.now()),tirocinio);
 		//integrità con DB
 		//if(DBApprovaModifica)
 		richieste.add(r);
