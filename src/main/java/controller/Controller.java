@@ -1,7 +1,6 @@
 package controller;
 import jdk.vm.ci.meta.Local;
 import model.*;
-
 import java.time.*;
 import java.util.*;
 
@@ -70,7 +69,7 @@ public class Controller {
 	}
 
 	public boolean faiRichiesta(Studente studente,Tirocinio tirocinio){
-		Richiesta r=studente.faiRichiesta("?", Date.from(LocalDate.now()),tirocinio);
+		Richiesta r=studente.faiRichiesta('?', Date.from(Instant.from(LocalDate.now())),tirocinio);
 		//integrità con DB
 		//if(DBApprovaModifica)
 		richieste.add(r);
@@ -80,9 +79,9 @@ public class Controller {
 	public ArrayList<Richiesta> vediRichiesta(Utente user,boolean isDocente){
 		ArrayList<Richiesta> r=new ArrayList<>();
 		for(Richiesta x:richieste){
-			if(!isDocente&&x.getStudente().equals(Studente(user)))
+			if(!isDocente&&x.getStudente().equals(new Studente(user)))
 				r.add(x);
-			else if(x.getDocente().equals(Docente(user)))
+			else if(x.getTirocinio().getRelatore().equals(new Docente(user)))
 				r.add(x);
 		}
 		return r;
