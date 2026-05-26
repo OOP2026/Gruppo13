@@ -33,10 +33,35 @@ public class Docente extends Utente{
     }
     @Override
     public String toString() {
-        String s="Docente: " + nome + " " +  cognome+ " ");
+        String s="Docente: " + nome + " " +  cognome+ " ";
         if (coordinatore)
             s=s.concat("Coordinatore");
         return s.concat("\n");
     }
 
+    public boolean accettaRichiesta(Richiesta richiesta) {
+        if (richiesta.getTirocinio().getRelatore().equals(this)){
+            richiesta.setStato('V');
+            return true;
+        }
+        return false;
+    }
+    public boolean rifiutaRichiesta(Richiesta richiesta) {
+        if (richiesta.getTirocinio().getRelatore().equals(this)){
+            richiesta.setStato('X');
+            return true;
+        }
+        return false;
+    }
+    public String visualizzaRichiesta(Richiesta richiesta){
+        if(richiesta.getTirocinio().getRelatore().equals(this))
+            return richiesta.toString();
+        return "";
+    }
+    public String visualizzaTesi(Tesi tesi) {
+        if (tesi.getRichiesta().getTirocinio().getRelatore().equals(this)){
+            return tesi.toString();
+        }
+        return "";
+    }
 }

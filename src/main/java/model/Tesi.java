@@ -24,7 +24,7 @@ public class Tesi {
     public void setContenuto(String contenuto) {
         this.contenuto = contenuto;
     }
-    public Seduta getRichiesta() {
+    public Richiesta getRichiesta() {
         return richiesta;
     }
     public void setRichiesta(Richiesta richiesta) {

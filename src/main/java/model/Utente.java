@@ -1,6 +1,6 @@
 package model;
 
-public class Utente {
+public abstract class Utente {
     protected String nome;
     protected String cognome;
     protected String password;
@@ -16,6 +16,8 @@ public class Utente {
             this.email = email;
     }
 
+    public abstract String visualizzaRichiesta(Richiesta richiesta);
+    public abstract String visualizzaTesi(Tesi tesi);
     public void setPassword(String password){
         if (loggedin) {
             this.password = password;

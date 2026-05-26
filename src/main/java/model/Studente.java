@@ -10,32 +10,28 @@ public class Studente extends Utente {
         this.matricola = matricola;
     }
 
-    public Richiesta faiRichiesta(char stato, Date data, Tirocinio tirocinio) {
-        return new Richiesta(stato,data,this,tirocinio);
+    public Richiesta faiRichiesta(Date data, Tirocinio tirocinio) {
+        if(tirocinio!=null)
+            return new Richiesta('?',data,this,tirocinio);
+        return null;
     }
 
     public String getMatricola() {
         return matricola;
     }
 
-    public Tesi aggiungiTesi(Richiesta r,char stato,String contenuto){
+    public Tesi aggiungiTesi(Richiesta r,String contenuto){
         if (r!=null){
-            return new Tesi(stato,contenuto,r);
+            return new Tesi('?',contenuto,r);
         }
         return null;
     }
-    public boolean aggiornaTesi(Tesi t,Richiesta r,String contenuto){
-        if (r.getStudente().equals(this)){
-            t.setContenuto(contenuto);
-            t.setStato('?');
-            return true;
+
+    public String visualizzaRichiesta(Richiesta richiesta){
+        if(richiesta.getStudente().equals(this)){
+            return ("Stato richiesta: "+richiesta.getStato());
         }
-        return false;
-    }
-    public void visualizzaRichiesta(Richiesta r){
-        if(r.getStudente().equals(this)){
-            System.out.println("Stato richiesta: "+r.getStato());
-        }
+        return "";
     }
     public boolean equals(Studente obj) {
         if (obj.getCognome().equals(cognome) && obj.getNome().equals(nome) && obj.getPassword().equals(password) && obj.getLogin().equals(login) && obj.getEmail().equals(email) && obj.getMatricola().equals(matricola))
@@ -43,4 +39,19 @@ public class Studente extends Utente {
         return false;
     }
 
+    public boolean aggiornaTesi(Tesi tesi,String contenuto) {
+        if (tesi.getRichiesta().getStudente().equals(this)){
+            tesi.setContenuto(contenuto);
+            tesi.setStato('?');
+            return true;
+        }
+        return false;
+    }
+
+    public String visualizzaTesi(Tesi tesi) {
+        if (tesi.getRichiesta().getStudente().equals(this)){
+            return tesi.toString();
+        }
+        return "";
+    }
 }
