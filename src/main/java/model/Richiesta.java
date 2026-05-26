@@ -38,7 +38,7 @@ public class Richiesta {
         this.tesi = tesi;
     }
     public String toString(){
-        return "Richiesta del "+data.toString()+":"+tirocinio.toString()+" stato:"+stato+"\n");
+        return ("Richiesta del "+data.toString()+":"+tirocinio.toString()+" stato:"+stato+"\n");
     }
 
 }
