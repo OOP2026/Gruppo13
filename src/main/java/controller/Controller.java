@@ -12,15 +12,14 @@ login docente
 docente\studente:vedi tirocinio
 docente: nuovo tirocinio
 docente:accetta/rifiuta richiesta
-docennte: elimina tirocinio
-docente:vedi elaborato
+docente: elimina tirocinio
+docente\studente:vedi elaborato
 docente:accetta/rifiuta elaborato
 docente:aggiungi seduta di laurea
 docente:carica voto seduta di laurea
 studente:fai richiesta
-studente:vedi richieste
+studente\docente:vedi richieste
 studente:vedi stato richieste
-studente vedi elaborato
 studente:aggiungi elaborato
 studente:modifica elaborato
 studente:prenota seduta di laurea
