@@ -79,9 +79,9 @@ public class Controller {
 	public ArrayList<Richiesta> vediRichiesta(Utente user,boolean isDocente){
 		ArrayList<Richiesta> r=new ArrayList<>();
 		for(Richiesta x:richieste){
-			if(!isDocente&&x.getStudente().equals(new Studente(user)))
+			if(!isDocente&&x.getStudente().equals((Studente)user))
 				r.add(x);
-			else if(x.getTirocinio().getRelatore().equals(new Docente(user)))
+			else if(x.getTirocinio().getRelatore().equals((Docente)user))
 				r.add(x);
 		}
 		return r;
