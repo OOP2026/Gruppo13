@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 public class SecondHomework {
     private JPanel panel;
     private JTextField mailField;
@@ -13,7 +12,45 @@ public class SecondHomework {
     private JButton docenteBtn;
     private JButton studenteBtn;
 
+    public SecondHomework() {
+
+        // Bottone Docente
+        docenteBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JFrame docenteFrame = new JFrame("Finestra Docente");
+                docenteFrame.setSize(300, 200);
+                docenteFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                JPanel p = new JPanel();
+                p.add(new JLabel("Benvenuto Docente"));
+
+                docenteFrame.setContentPane(p);
+                docenteFrame.setVisible(true);
+            }
+        });
+
+        // Bottone Studente
+        studenteBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JFrame studenteFrame = new JFrame("Finestra Studente");
+                studenteFrame.setSize(300, 200);
+                studenteFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                JPanel p = new JPanel();
+                p.add(new JLabel("Benvenuto Studente"));
+
+                studenteFrame.setContentPane(p);
+                studenteFrame.setVisible(true);
+            }
+        });
+    }
+
     public static void main(String[] args) {
+
         JFrame loginPage = new JFrame("Login Page");
         loginPage.setContentPane(new SecondHomework().panel);
         loginPage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
