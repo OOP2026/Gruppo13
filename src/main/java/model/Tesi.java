@@ -1,4 +1,4 @@
-package PrimoHomework;
+package model;
 
 public class Tesi {
     private char stato;

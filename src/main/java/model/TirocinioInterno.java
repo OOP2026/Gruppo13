@@ -1,4 +1,4 @@
-package PrimoHomework;
+package model;
 
 public class TirocinioInterno extends Tirocinio{
     public TirocinioInterno(String nome, String descrizione, Docente relatore) {

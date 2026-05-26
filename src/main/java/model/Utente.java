@@ -1,4 +1,4 @@
-package PrimoHomework;
+package model;
 
 public class Utente {
     protected String nome;

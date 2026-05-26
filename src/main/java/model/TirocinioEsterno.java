@@ -1,4 +1,4 @@
-package PrimoHomework;
+package model;
 
 public class TirocinioEsterno extends Tirocinio{
     protected String nomeAzienda;
