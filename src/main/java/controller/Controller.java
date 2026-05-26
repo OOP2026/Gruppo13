@@ -69,10 +69,10 @@ public class Controller {
 	}
 
 	public boolean faiRichiesta(Studente studente,Tirocinio tirocinio){
-		Richiesta r=studente.faiRichiesta("?", Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()),tirocinio)
+		Richiesta r=studente.faiRichiesta("?", Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()),tirocinio);
 		//integrità con DB
 		//if(DBApprovaModifica)
-		richieste.add(r)
+		richieste.add(r);
 		return true;
 	}
 
@@ -81,7 +81,7 @@ public class Controller {
 		for(Richiesta x:richieste){
 			if(!isDocente&&x.getStudente().equals(Studente(user)))
 				r.add(x);
-			else if(x.getDocente().equals(Docente(user))
+			else if(x.getDocente().equals(Docente(user)))
 				r.add(x);
 		}
 		return r;
@@ -104,7 +104,7 @@ docente:accetta/rifiuta elaborato
 docente:aggiungi seduta di laurea
 docente:carica voto seduta di laurea
 studente:fai richiesta OK
-studente\docente:vedi richieste
+studente\docente:vedi richieste OK
 studente:vedi stato richieste
 studente:aggiungi elaborato
 studente:modifica elaborato
