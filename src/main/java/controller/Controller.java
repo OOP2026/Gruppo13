@@ -1,5 +1,4 @@
 package controller;
-import jdk.vm.ci.meta.Local;
 import model.*;
 import java.time.*;
 import java.util.*;
@@ -87,6 +86,19 @@ public class Controller {
 		return r;
 	}
 
+	public boolean modificaStatoRichiesta(Docente docente,Richiesta richiesta,boolean ok){
+		if(ok){
+			//Integrità con DB
+			richiesta.setStato('V');
+		}
+		else{
+			//Integrità con DB
+			richiesta.setStato('X');
+		}
+		return true;
+	}
+
+
 
 }
 /*
@@ -95,7 +107,7 @@ login studente OK
 login docente OK
 docente\studente:vedi tirocinio OK ish
 docente: nuovo tirocinio OK
-docente:accetta/rifiuta richiesta
+docente:accetta/rifiuta richiesta OK ish
 docente: elimina tirocinio
 docente\studente:vedi elaborato
 docente:accetta/rifiuta elaborato
