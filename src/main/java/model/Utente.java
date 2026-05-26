@@ -28,14 +28,17 @@ public class Utente {
         }
     }
 
-    public void logIn(String email, String password) {
+    public Utente logIn(String email, String password) {
         if (email.equals(this.email) && password.equals(this.password)) {
             loggedin = true;
             System.out.println("Sei loggato");
+            return this;
         }
         else {
             System.out.println("Credenziali sbagliate");
+            return null;
         }
+
     }
 
     public String getNome() {
@@ -53,6 +56,8 @@ public class Utente {
     public String getEmail() {
         return email;
     }
+
+    public String getPassword() {return password;}
 
     public void logOut(){
         loggedin=false;

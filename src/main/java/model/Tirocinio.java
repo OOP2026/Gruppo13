@@ -13,4 +13,8 @@ public class Tirocinio {
     public String getDescrizione() {return this.descrizione;}
     public Docente getRelatore(){return this.relatore;}
 
+    @Override
+    public String toString() {
+        return "Tirocinio "+nome+":\n"+descrizione+"\nRelatore:"+relatore+"\n";
+    }
 }

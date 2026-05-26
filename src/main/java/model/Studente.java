@@ -12,8 +12,8 @@ public class Studente extends Utente {
         this.matricola = matricola;
     }
 
-    public Richiesta faiRichiesta(char stato, Date data){
-        Richiesta r=new Richiesta(stato,data,this);
+    public Richiesta faiRichiesta(char stato, Date data, Tirocinio tirocinio) {
+        Richiesta r=new Richiesta(stato,data,this,tirocinio);
         richieste.add(r);
         return r;
     }
@@ -43,6 +43,11 @@ public class Studente extends Utente {
         if(richieste.contains(r)){
             System.out.println("Stato richiesta: "+r.getStato());
         }
+    }
+    public boolean equals(Studente obj) {
+        if (obj.getCognome().equals(cognome) && obj.getNome().equals(nome) && obj.getPassword().equals(password) && obj.getLogin().equals(login) && obj.getEmail().equals(email) && obj.getMatricola().equals(matricola))
+            return true;
+        return false;
     }
 
 }

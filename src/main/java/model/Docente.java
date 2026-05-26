@@ -34,5 +34,10 @@ public class Docente extends Utente{
     public ArrayList<Tirocinio> visualizzaTirocini(){
         return Tirocini;
     }
-    
+    public boolean equals(Docente obj) {
+        if (obj.getCognome().equals(cognome) && obj.getNome().equals(nome) && obj.getPassword().equals(password) && obj.getLogin().equals(login) && obj.getEmail().equals(email))
+            return true;
+        return false;
+    }
+
 }

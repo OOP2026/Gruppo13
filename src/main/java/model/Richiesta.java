@@ -7,11 +7,18 @@ public class Richiesta {
     private Date data;
     private Studente studente;
     private Tesi tesi;
-    public Richiesta(char stato, Date data,Studente studente) {
+    private Tirocinio tirocinio;
+    public Richiesta(char stato, Date data,Studente studente,Tirocinio tirocinio) {
         this.stato = stato;
         this.data = data;
         this.studente = studente;
+        this.tirocinio = tirocinio;
     }
+
+    public Tirocinio getTirocinio() {
+        return tirocinio;
+    }
+
     public char getStato() {
         return stato;
     }
@@ -24,12 +31,14 @@ public class Richiesta {
     public void setStato(char stato) {
         this.stato = stato;
     }
-
     public Tesi getTesi() {
         return tesi;
     }
     public void setTesi(Tesi tesi) {
         this.tesi = tesi;
+    }
+    public String toString(){
+        return "Richiesta del "+data.toString()+":"+tirocinio.toString()+" stato:"+stato+"\n");
     }
 
 }
