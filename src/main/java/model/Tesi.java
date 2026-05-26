@@ -3,11 +3,13 @@ package model;
 public class Tesi {
     private char stato;
     private String contenuto;
-    private Seduta seduta=null;
+    private Richiesta richiesta;
 
-    public Tesi(char stato, String contenuto){
+
+    public Tesi(char stato, String contenuto,Richiesta richiesta){
         this.stato = stato;
         this.contenuto = contenuto;
+        this.richiesta = richiesta;
     }
 
     public char getStato() {
@@ -22,11 +24,11 @@ public class Tesi {
     public void setContenuto(String contenuto) {
         this.contenuto = contenuto;
     }
-    public Seduta getSeduta() {
-        return seduta;
+    public Seduta getRichiesta() {
+        return richiesta;
     }
-    public void setSeduta(Seduta seduta) {
-        this.seduta = seduta;
+    public void setRichiesta(Richiesta richiesta) {
+        this.richiesta = richiesta;
     }
 
 

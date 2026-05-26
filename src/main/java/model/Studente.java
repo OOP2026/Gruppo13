@@ -1,11 +1,9 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 public class Studente extends Utente {
     private String matricola;
-    private ArrayList<Richiesta> richieste = new ArrayList<>();
 
     public Studente(String nome, String cognome, String password, String login, String email, String matricola) {
         super(nome, cognome, password, login, email);
@@ -13,26 +11,21 @@ public class Studente extends Utente {
     }
 
     public Richiesta faiRichiesta(char stato, Date data, Tirocinio tirocinio) {
-        Richiesta r=new Richiesta(stato,data,this,tirocinio);
-        richieste.add(r);
-        return r;
+        return new Richiesta(stato,data,this,tirocinio);
     }
 
     public String getMatricola() {
         return matricola;
     }
 
-    public boolean aggiungiTesi(Richiesta r,char stato,String contenuto){
-        if (richieste.contains(r)){
-            Tesi t =new Tesi(stato,contenuto);
-            r.setTesi(t);
-            return true;
+    public Tesi aggiungiTesi(Richiesta r,char stato,String contenuto){
+        if (r!=null){
+            return new Tesi(stato,contenuto,r);
         }
-        return false;
+        return null;
     }
-    public boolean aggiornaTesi(Richiesta r,String contenuto){
-        Tesi t=r.getTesi();
-        if (richieste.contains(r)&&t!=null){
+    public boolean aggiornaTesi(Tesi t,Richiesta r,String contenuto){
+        if (r.getStudente().equals(this)){
             t.setContenuto(contenuto);
             t.setStato('?');
             return true;
@@ -40,7 +33,7 @@ public class Studente extends Utente {
         return false;
     }
     public void visualizzaRichiesta(Richiesta r){
-        if(richieste.contains(r)){
+        if(r.getStudente().equals(this)){
             System.out.println("Stato richiesta: "+r.getStato());
         }
     }

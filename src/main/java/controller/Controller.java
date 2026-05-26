@@ -13,7 +13,7 @@ public class Controller {
 	ArrayList<Tesi> tesi=new ArrayList<>();
 
 	public Controller() {
-
+		//Integrità con il DB
 	}
 
 	public Utente login(String email, String password, boolean isDocente){
@@ -37,11 +37,11 @@ public class Controller {
 		String s="Elenco tirocini:\n";
 		for(Tirocinio x:tirocini){
 			if(!isDocente||x.getRelatore().equals(user))
-				s.concat("\n"+x.toString());
+				s=s.concat("\n"+x.toString());
 		}
 		return s;
 	}
-	public ArrayList<Tirocinio> GetTirocini(Utente user,boolean isDocente){
+	public ArrayList<Tirocinio> getTirocini(Utente user,boolean isDocente){
 		ArrayList<Tirocinio> t=new ArrayList<>();
 		for(Tirocinio x:tirocini){
 			if(!isDocente||x.getRelatore().equals(user))
@@ -78,25 +78,27 @@ public class Controller {
 	public ArrayList<Richiesta> vediRichiesta(Utente user,boolean isDocente){
 		ArrayList<Richiesta> r=new ArrayList<>();
 		for(Richiesta x:richieste){
-			if(!isDocente&&x.getStudente().equals((Studente)user))
-				r.add(x);
-			else if(x.getTirocinio().getRelatore().equals((Docente)user))
+			if(!isDocente&&x.getStudente().equals((Studente)user)||isDocente&&x.getTirocinio().getRelatore().equals((Docente)user))
 				r.add(x);
 		}
 		return r;
 	}
 
 	public boolean modificaStatoRichiesta(Docente docente,Richiesta richiesta,boolean ok){
-		if(ok){
-			//Integrità con DB
-			richiesta.setStato('V');
+		if(richiesta.getTirocinio().getRelatore().equals(docente)){
+			if(ok){
+				//Integrità con DB
+				richiesta.setStato('V');
+			}
+			else{
+				//Integrità con DB
+				richiesta.setStato('X');
+			}
+			return true;
 		}
-		else{
-			//Integrità con DB
-			richiesta.setStato('X');
-		}
-		return true;
+		return false;
 	}
+
 
 
 
@@ -109,6 +111,7 @@ docente\studente:vedi tirocinio OK ish
 docente: nuovo tirocinio OK
 docente:accetta/rifiuta richiesta OK ish
 docente: elimina tirocinio
+docente/studente:cerca tirocinio
 docente\studente:vedi elaborato
 docente:accetta/rifiuta elaborato
 docente:aggiungi seduta di laurea

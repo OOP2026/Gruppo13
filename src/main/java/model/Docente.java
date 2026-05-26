@@ -1,11 +1,7 @@
 package model;
-import java.util.ArrayList;
 
 public class Docente extends Utente{
     protected boolean coordinatore;
-
-    protected ArrayList<Tirocinio> Tirocini = new ArrayList<>();
-
     public Docente(String nome, String cognome, String password, String login,String  email, boolean coordinatore){
         super(nome, cognome, password, login, email);
         this.coordinatore = coordinatore;
@@ -19,25 +15,28 @@ public class Docente extends Utente{
     }
 
     public Tirocinio aggiungiTirocinio(String nome, String descrizione){
-        TirocinioInterno t = new TirocinioInterno(nome, descrizione, this);
-        Tirocini.add(t);
-        return t;
+        return new TirocinioInterno(nome, descrizione, this);
     }
     public Tirocinio aggiungiTirocinio(String nome, String descrizione, String nomeAzienda, String referente){
-        TirocinioEsterno t = new TirocinioEsterno(nome, descrizione, this, nomeAzienda, referente);
-        Tirocini.add(t);
-        return t;
+        return new TirocinioEsterno(nome, descrizione, this, nomeAzienda, referente);
     }
     public Boolean isCoordinatore(){
         return coordinatore;
     }
-    public ArrayList<Tirocinio> visualizzaTirocini(){
-        return Tirocini;
+    public void setCoordinatore(boolean coordinatore){
+        this.coordinatore = coordinatore;
     }
     public boolean equals(Docente obj) {
         if (obj.getCognome().equals(cognome) && obj.getNome().equals(nome) && obj.getPassword().equals(password) && obj.getLogin().equals(login) && obj.getEmail().equals(email))
             return true;
         return false;
+    }
+    @Override
+    public String toString() {
+        String s="Docente: " + nome + " " +  cognome+ " ");
+        if (coordinatore)
+            s=s.concat("Coordinatore");
+        return s.concat("\n");
     }
 
 }

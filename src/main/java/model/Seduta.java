@@ -14,5 +14,15 @@ public class Seduta {
     public Date getData() {
         return data;
     }
+    public void setVoto(int voto) {
+        this.voto = voto;
+    }
+    public int getVoto() {
+        return voto;
+    }
+    public Tesi getTesi(){
+        return tesi;
+    }
+}
 
 }

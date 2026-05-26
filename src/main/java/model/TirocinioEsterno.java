@@ -17,6 +17,18 @@ public class TirocinioEsterno extends Tirocinio{
     public String getReferente() {
         return referente;
     }
+    public void setNome(String nome){
+        this.nome=nome;
+    }
+    public void setDescrizione(String descrizione){
+        this.descrizione=descrizione;
+    }
+    public String getNome(){
+        return nome;
+    }
+    public String getDescrizione(){
+        return descrizione;
+    }
 
     @Override
     public String toString() {
