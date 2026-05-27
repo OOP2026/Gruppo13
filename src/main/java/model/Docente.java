@@ -1,17 +1,27 @@
 package model;
 
+import java.time.LocalDate;
+
 public class Docente extends Utente{
     protected boolean coordinatore;
     public Docente(String nome, String cognome, String password, String login,String  email, boolean coordinatore){
         super(nome, cognome, password, login, email);
         this.coordinatore = coordinatore;
     }
-    public void accettaTesi(Tesi t){
-        t.setStato('V');
+    public boolean accettaTesi(Tesi t){
+        if (t.getRichiesta().getTirocinio().getRelatore().equals(this)){
+            t.setStato('V');
+            return true;
+        }
+        return false;
     }
 
-    public void rifiutaTesi(Tesi t){
-        t.setStato('X');
+    public boolean rifiutaTesi(Tesi t){
+        if (t.getRichiesta().getTirocinio().getRelatore().equals(this)){
+            t.setStato('X');
+            return true;
+        }
+        return false;
     }
 
     public Tirocinio aggiungiTirocinio(String nome, String descrizione){
@@ -64,4 +74,24 @@ public class Docente extends Utente{
         }
         return "";
     }
+    public String visualizzaSedutaDiLaurea(Seduta seduta) {
+        if (seduta.getTesi().getRichiesta().getTirocinio().getRelatore().equals(this)){
+            return seduta.toString();
+        }
+        return null;
+    }
+
+    public Seduta aggiungiSedutaDiLaurea(LocalDate data){
+        return new Seduta(data,this);
+    }
+
+    public boolean aggiungiVotoSedutaDiLaurea(Seduta seduta, int v){
+        if(seduta.getDocente().equals(this)&&seduta.getTesi()!=null){
+            seduta.setVoto(v);
+            return true;
+        }
+        return false;
+    }
+
+
 }

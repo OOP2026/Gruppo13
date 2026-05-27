@@ -1,13 +1,12 @@
 package model;
 
 public class Tesi {
-    private char stato;
+    private char stato='?';
     private String contenuto;
     private Richiesta richiesta;
+    private Seduta seduta;
 
-
-    public Tesi(char stato, String contenuto,Richiesta richiesta){
-        this.stato = stato;
+    public Tesi(String contenuto,Richiesta richiesta){
         this.contenuto = contenuto;
         this.richiesta = richiesta;
     }
@@ -29,6 +28,12 @@ public class Tesi {
     }
     public void setRichiesta(Richiesta richiesta) {
         this.richiesta = richiesta;
+    }
+    public Seduta getSeduta() {
+        return seduta;
+    }
+    public void setSeduta(Seduta seduta) {
+        this.seduta = seduta;
     }
 
 

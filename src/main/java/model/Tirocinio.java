@@ -4,7 +4,7 @@ public class Tirocinio {
     protected String nome;
     protected String descrizione;
     protected Docente relatore;
-    protected Tirocinio(String nome, String descrizione,Docente relatore) {
+    public Tirocinio(String nome, String descrizione, Docente relatore) {
         this.nome = nome;
         this.descrizione = descrizione;
         this.relatore = relatore;

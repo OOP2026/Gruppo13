@@ -1,15 +1,14 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Richiesta {
-    private char stato;
-    private Date data;
+    private char stato='?';
+    private LocalDate data;
     private Studente studente;
     private Tesi tesi;
     private Tirocinio tirocinio;
-    public Richiesta(char stato, Date data,Studente studente,Tirocinio tirocinio) {
-        this.stato = stato;
+    public Richiesta(LocalDate data,Studente studente,Tirocinio tirocinio) {
         this.data = data;
         this.studente = studente;
         this.tirocinio = tirocinio;
@@ -22,7 +21,7 @@ public class Richiesta {
     public char getStato() {
         return stato;
     }
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
     public Studente getStudente() {

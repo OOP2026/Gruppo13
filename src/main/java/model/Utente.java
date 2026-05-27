@@ -18,6 +18,7 @@ public abstract class Utente {
 
     public abstract String visualizzaRichiesta(Richiesta richiesta);
     public abstract String visualizzaTesi(Tesi tesi);
+    public abstract String visualizzaSedutaDiLaurea(Seduta seduta);
     public void setPassword(String password){
         if (loggedin) {
             this.password = password;
