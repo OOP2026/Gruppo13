@@ -167,7 +167,7 @@ public class Controller {
 	public boolean aggiungiTesi(Studente studente,Richiesta r, String contenuto) throws NullPointerException{
 		try {
 			if (r.getStudente().equals(studente)){
-				Tesi x=(studente.aggiungiTesi(r,contenuto);
+				Tesi x=(studente.aggiungiTesi(r,contenuto));
 				//Integrità con il db
 				tesi.add(x);
 				return true;
