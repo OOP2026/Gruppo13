@@ -19,6 +19,16 @@ public class SecondHomework {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                // Salvataggio valori in variabili
+                String mail = mailField.getText();
+
+                // Password da JPasswordField
+                String password = new String(passwordField.getPassword());
+
+                // Stampa di prova
+                System.out.println("MAIL: " + mail);
+                System.out.println("PASSWORD: " + password);
+
                 JFrame docenteFrame = new JFrame("Finestra Docente");
                 docenteFrame.setSize(300, 200);
                 docenteFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -35,6 +45,16 @@ public class SecondHomework {
         studenteBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                // Salvataggio valori in variabili
+                String mail = mailField.getText();
+
+                // Password da JPasswordField
+                String password = new String(passwordField.getPassword());
+
+                // Stampa di prova
+                System.out.println("MAIL: " + mail);
+                System.out.println("PASSWORD: " + password);
 
                 JFrame studenteFrame = new JFrame("Finestra Studente");
                 studenteFrame.setSize(300, 200);
