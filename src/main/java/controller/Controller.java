@@ -2,8 +2,6 @@ package controller;
 import model.*;
 import java.time.*;
 import java.util.*;
-import java.lang.*;
-import java.util.logging.Logger;
 
 public class Controller {
 	ArrayList<Docente> docenti = new ArrayList<>();
@@ -22,13 +20,11 @@ public class Controller {
 		if(isDocente){
 			for(Docente x:docenti){
 				log=x.logIn(email, password);
-				if (log!=null) return log;
 			}
 		}
 		else{
 			for (Studente x : studenti){
 				log=x.logIn(email, password);
-				if (log!=null) return log;
 			}
 		}
 		return log;
@@ -42,7 +38,7 @@ public class Controller {
 		}
 		return s;
 	}
-	public ArrayList<Tirocinio> getTirocini(Utente user,boolean isDocente){
+	public List<Tirocinio> getTirocini(Utente user,boolean isDocente){
 		ArrayList<Tirocinio> t=new ArrayList<>();
 		for(Tirocinio x:tirocini){
 			if(!isDocente||x.getRelatore().equals(user))
@@ -79,10 +75,11 @@ public class Controller {
 		catch(NullPointerException e){
 			System.out.println("Richiesta non inserita, controlla studente e/o tirocinio");
 			e.printStackTrace();
+			return false;
 		}
 	}
 
-	public ArrayList<Richiesta> vediRichiesta(Utente user,boolean isDocente){
+	public List<Richiesta> vediRichiesta(Utente user,boolean isDocente){
 		ArrayList<Richiesta> r=new ArrayList<>();
 		for(Richiesta x:richieste){
 			if(!isDocente&&x.getStudente().equals((Studente)user)||isDocente&&x.getTirocinio().getRelatore().equals((Docente)user))
@@ -167,7 +164,7 @@ public class Controller {
 	public boolean aggiungiTesi(Studente studente,Richiesta r, String contenuto) throws NullPointerException{
 		try {
 			if (r.getStudente().equals(studente)){
-				Tesi x=(studente.aggiungiTesi(r,contenuto);
+				Tesi x=studente.aggiungiTesi(r,contenuto);
 				//Integrità con il db
 				tesi.add(x);
 				return true;
@@ -177,8 +174,8 @@ public class Controller {
 		catch(NullPointerException e){
 			System.out.println("Tesi non inserita correttamente, ricontrolla la richiesta!");
 			e.printStackTrace();
+			return false;
 		}
-
 	}
 
 	//MAY BE NULL
