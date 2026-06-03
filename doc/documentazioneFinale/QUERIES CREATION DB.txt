@@ -1,0 +1,22 @@
+CREATE DATABASE Gruppo13;
+//In connessione con Database Gruppo13;
+CREATE TABLE STUDENTE(
+	Nome VARCHAR(31);
+	Cognome VARCHAR(31);
+	Password VARCHAR(127);
+	Login VARCHAR(31) PRIMARY KEY;
+	Stato BOOLEAN;
+	Email VARCHAR(127) UNIQUE;
+	Matricola CHAR(10);
+);
+ALTER TABLE STUDENTE ADD CONSTRAINT StudenteEmailCheck CHECK REGEXP_LIKE(Email,'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+CREATE TABLE DOCENTE(
+	Nome VARCHAR(31);
+	Cognome VARCHAR(31);
+	Password VARCHAR(127);
+	Login VARCHAR(31) PRIMARY KEY;
+	Stato BOOLEAN;
+	Email VARCHAR(127) UNIQUE;
+	Coordinatore BOOLEAN;
+);
+ALTER TABLE DOCENTE ADD CONSTRAINT DocenteEmailCheck CHECK REGEXP_LIKE(Email,'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
