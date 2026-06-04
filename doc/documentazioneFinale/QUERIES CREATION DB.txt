@@ -19,4 +19,4 @@ CREATE TABLE DOCENTE(
 	Email VARCHAR(127) UNIQUE;
 	Coordinatore BOOLEAN;
 );
-ALTER TABLE DOCENTE ADD CONSTRAINT DocenteEmailCheck CHECK REGEXP_LIKE(Email,'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+ALTER TABLE STUDENTE ADD CONSTRAINT DocenteEmailCheck CHECK REGEXP_LIKE(Email,'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
