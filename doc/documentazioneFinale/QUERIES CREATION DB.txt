@@ -61,6 +61,7 @@ CREATE TABLE SEDUTA(
 	CONSTRAINT CheckVotoFinaleSeduta CHECK(VotoFinale>=0 AND VotoFinale<=32 AND VotoFinale!=31)
 );
 
+
 CREATE OR REPLACE FUNCTION TirocinioUnique()
 	RETURNS trigger AS 
 $TirocinioUnique$
@@ -74,12 +75,15 @@ BEGIN
 		THEN RAISE EXCEPTION 'Tirocinio già esistente sotto altro ID';
 		END IF;
 	END IF;
+	RETURN NEW;
 END;
 $TirocinioUnique$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE TRIGGER TirocinioUniqueTrigger
 	BEFORE INSERT OR UPDATE ON Tirocinio
 	FOR EACH ROW 
 EXECUTE FUNCTION TirocinioUnique();
+
 
 CREATE OR REPLACE FUNCTION RichiestaUnique()
 	RETURNS trigger AS 
@@ -94,12 +98,14 @@ BEGIN
 		THEN RAISE EXCEPTION 'Richiesta già esistente sotto altro ID';
 		END IF;
 	END IF;
+
 END;
 $RichiestaUnique$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER RichiestaUniqueTrigger
 	BEFORE INSERT OR UPDATE ON Richiesta
 	FOR EACH ROW 
 EXECUTE FUNCTION RichiestaUnique();
+
 
 CREATE OR REPLACE FUNCTION RichiestaInCorso()
 	RETURNS trigger AS 
@@ -114,6 +120,7 @@ BEGIN
 		THEN RAISE EXCEPTION 'Richiesta già esistente sotto altro ID';
 		END IF;
 	END IF;
+	RETURN NEW;
 END;
 $RichiestaInCorso$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER RichiestaInCorsoTrigger
@@ -121,5 +128,29 @@ CREATE OR REPLACE TRIGGER RichiestaInCorsoTrigger
 	FOR EACH ROW 
 EXECUTE FUNCTION RichiestaInCorso();
 
+
+CREATE OR REPLACE FUNCTION TesiSuRichiestaAccettata()
+	RETURNS trigger AS
+$TesiSuRichiestaAccettata$
+BEGIN
+	IF NEW.is_deleted = false THEN
+		IF EXISTS(
+			SELECT *
+			FROM Richiesta as R
+			WHERE R.ID_Ri = NEW.ID_Ri AND R.Stato <> 'V'	
+		)
+		THEN RAISE EXCEPTION 'Tesi associata a richiesta non accettata';
+		END IF;
+	END IF;
+	RETURN NEW;
+END;	
+$TesiSuRichiestaAccettata$ LANGUAGE plpgsql;
+CREATE OR REPLACE TRIGGER TesiSuRichiestaAccettataTrigger
+	BEFORE INSERT OR UPDATE ON Tesi
+	FOR EACH ROW
+EXECUTE FUNCTION TesiSuRichiestaAccettata();
+
+
+CREATE OR REPLACE
 
 
