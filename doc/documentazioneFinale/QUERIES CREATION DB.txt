@@ -66,14 +66,12 @@ CREATE OR REPLACE FUNCTION TirocinioUnique()
 	RETURNS trigger AS 
 $TirocinioUnique$
 BEGIN
-	IF NEW.is_deleted = false THEN
-		IF EXISTS(
-			SELECT *
-			FROM TIROCINIO AS T
-			WHERE T.ID_Ti <> NEW.ID_Ti AND T.Nome = NEW.NOME AND T.Data = NEW.Data AND T.Login = NEW.Login
-		)
-		THEN RAISE EXCEPTION 'Tirocinio già esistente sotto altro ID';
-		END IF;
+	IF EXISTS(
+		SELECT *
+		FROM TIROCINIO AS T
+		WHERE T.ID_Ti <> NEW.ID_Ti AND T.Nome = NEW.NOME AND T.Data = NEW.Data AND T.Login = NEW.Login	
+	)
+	THEN RAISE EXCEPTION 'Tirocinio già esistente sotto altro ID';
 	END IF;
 	RETURN NEW;
 END;
@@ -89,16 +87,14 @@ CREATE OR REPLACE FUNCTION RichiestaUnique()
 	RETURNS trigger AS 
 $RichiestaUnique$
 BEGIN
-	IF NEW.is_deleted = false THEN
-		IF EXISTS(
+	IF EXISTS(
 			SELECT *
 			FROM Richiesta AS R
 			WHERE R.ID_Ri <> NEW.ID_Ri AND R.ID_Ti = NEW.ID_Ti AND R.Data = NEW.Data AND R.Login = NEW.Login
 		)
 		THEN RAISE EXCEPTION 'Richiesta già esistente sotto altro ID';
-		END IF;
 	END IF;
-
+	RETURN NEW;
 END;
 $RichiestaUnique$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER RichiestaUniqueTrigger
@@ -111,14 +107,12 @@ CREATE OR REPLACE FUNCTION RichiestaInCorso()
 	RETURNS trigger AS 
 $RichiestaInCorso$
 BEGIN
-	IF NEW.is_deleted = false THEN
-		IF EXISTS(
-			SELECT *
-			FROM Richiesta AS R
-			WHERE R.ID_Ri <> NEW.ID_Ri AND R.ID_Ti = NEW.ID_Ti AND R.Login = NEW.Login AND ((NEW.Stato != 'X' AND NEW.Data<R.Data) OR(R.Stato!=X AND R.Data<NEW.Data))
+	IF EXISTS(
+		SELECT *
+		FROM Richiesta AS R
+		WHERE R.ID_Ri <> NEW.ID_Ri AND R.ID_Ti = NEW.ID_Ti AND R.Login = NEW.Login AND ((NEW.Stato != 'X' AND NEW.Data<R.Data) OR(R.Stato!=X AND R.Data<NEW.Data))
 		)
 		THEN RAISE EXCEPTION 'Richiesta già esistente sotto altro ID';
-		END IF;
 	END IF;
 	RETURN NEW;
 END;
@@ -133,15 +127,14 @@ CREATE OR REPLACE FUNCTION TesiSuRichiestaAccettata()
 	RETURNS trigger AS
 $TesiSuRichiestaAccettata$
 BEGIN
-	IF NEW.is_deleted = false THEN
-		IF EXISTS(
-			SELECT *
-			FROM Richiesta as R
-			WHERE R.ID_Ri = NEW.ID_Ri AND R.Stato <> 'V'	
-		)
+	IF EXISTS(
+		SELECT *
+		FROM Richiesta as R
+		WHERE R.ID_Ri = NEW.ID_Ri AND R.Stato <> 'V'			
+	)
 		THEN RAISE EXCEPTION 'Tesi associata a richiesta non accettata';
-		END IF;
 	END IF;
+	
 	RETURN NEW;
 END;	
 $TesiSuRichiestaAccettata$ LANGUAGE plpgsql;
@@ -151,6 +144,169 @@ CREATE OR REPLACE TRIGGER TesiSuRichiestaAccettataTrigger
 EXECUTE FUNCTION TesiSuRichiestaAccettata();
 
 
-CREATE OR REPLACE
+CREATE OR REPLACE FUNCTION SedutaSuTesiAccettata()
+	RETURNS trigger AS
+$SedutaSuTesiAccettata$
+BEGIN
+	IF EXISTS(
+		SELECT *
+		FROM Tesi AS T
+		WHERE T.ID_Te = NEW.ID_Te AND T.Stato <> 'V'
+	)
+	THEN RAISE EXCEPTION 'Seduta associata a tesi non accettata';
+	END IF;
 
+	RETURN NEW;
+END;
+$SedutaSuTesiAccettata$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE TRIGGER SedutaSuTesiAccettataTrigger
+	BEFORE INSERT OR UPDATE ON SEDUTA
+	FOR EACH ROW
+EXECUTE FUNCTION SedutaSuTesiAccettata();
+
+CREATE OR REPLACE FUNCTION SeduteSovrapposizioneDocente()
+	RETURNS trigger AS 
+$SeduteSovrapposizioneDocente$
+BEGIN
+	IF EXISTS(
+		SELECT *
+		FROM SEDUTA AS S
+		WHERE S.Login = NEW.Login 
+		  AND S.Data = NEW.Data 
+		  AND S.Ora = NEW.Ora 
+		  AND S.ID_Se <> COALESCE(NEW.ID_Se, -1)
+	)
+	THEN RAISE EXCEPTION 'Docente già occupato per seduta';
+	END IF;
+	
+	RETURN NEW;
+END;	
+$SeduteSovrapposizioneDocente$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER SeduteSovrapposizioneDocenteTrigger
+	BEFORE INSERT OR UPDATE ON SEDUTA
+	FOR EACH ROW
+EXECUTE FUNCTION SeduteSovrapposizioneDocente();
+
+CREATE OR REPLACE FUNCTION RichiestaAttiva()
+	RETURNS trigger AS 
+$RichiestaAttiva$
+BEGIN
+	-- Verifica se lo studente ha già una richiesta in stato '?' o 'V'
+	IF EXISTS(
+		SELECT *
+		FROM RICHIESTA AS R
+		WHERE R.Login = NEW.Login 
+		  AND R.Stato <> 'X' 
+		  AND R.ID_Ri <> COALESCE(NEW.ID_Ri, -1)
+	)
+	THEN RAISE EXCEPTION 'Altra richiesta ancora attiva/in valutazione>/accettata';
+	END IF;
+	
+	RETURN NEW;
+END;	
+$RichiestaAttiva$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER RichiestaAttivaTrigger
+	BEFORE INSERT OR UPDATE ON RICHIESTA
+	FOR EACH ROW
+EXECUTE FUNCTION RichiestaAttiva();
+
+CREATE OR REPLACE FUNCTION SedutaControlloDataRichiesta()
+	RETURNS trigger AS 
+$SedutaControlloDataTirocinio$
+DECLARE
+	data_richiesta DATE;
+BEGIN
+	SELECT R.Data INTO data_richiesta
+	FROM TESI Te
+	JOIN RICHIESTA R ON Te.ID_Ri = R.ID_Ri
+	WHERE Te.ID_Te = NEW.ID_Te;
+
+	IF NEW.Data <= data_richiesta THEN
+		RAISE EXCEPTION 'Seduta precedente rispetto alla richiesta di tirocinio.';
+	END IF;
+
+	RETURN NEW;
+END;	
+$SedutaControlloDataTirocinio$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER SedutaControlloDataRichiestaTrigger
+	BEFORE INSERT OR UPDATE ON SEDUTA
+	FOR EACH ROW
+EXECUTE FUNCTION SedutaControlloDataRichiesta();
+
+CREATE OR REPLACE FUNCTION TesiRimuoviAnnullamentoRichiesta()
+	RETURNS trigger AS 
+$TesiRimuoviAnnullamentoRichiesta$
+BEGIN	
+	IF NEW.Stato ='X' AND OLD.Stato = 'V' THEN
+		DELETE FROM SEDUTA 
+		WHERE ID_Te IN (SELECT ID_Te FROM TESI WHERE ID_Ri = NEW.ID_Ri);
+		DELETE FROM TESI 
+		WHERE ID_Ri = NEW.ID_Ri;
+	END IF;
+	
+	RETURN NEW;
+END;	
+$TesiRimuoviAnnullamentoRichiesta$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER TesiRimuoviAnnullamentoRichiestaTrigger
+	AFTER UPDATE ON RICHIESTA
+	FOR EACH ROW
+EXECUTE FUNCTION TesiRimuoviAnnullamentoRichiesta();
+
+CREATE OR REPLACE FUNCTION SedutaRimuoviAnnullamentoTesi()
+	RETURNS trigger AS 
+$SedutaRimuoviAnnullamentoTesi$
+BEGIN	
+	IF NEW.Stato ='X' AND OLD.Stato = 'V' THEN
+		DELETE FROM SEDUTA 
+		WHERE ID_Te = NEW.ID_Te;
+	END IF;
+	
+	RETURN NEW;
+END;	
+$SedutaRimuoviAnnullamentoTesi$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER SedutaRimuoviAnnullamentoTesiTrigger
+	AFTER UPDATE ON TESI
+	FOR EACH ROW
+EXECUTE FUNCTION SedutaRimuoviAnnullamentoTesi();
+
+CREATE OR REPLACE FUNCTION TesiUnique()
+	RETURNS trigger AS 
+$TesiUnique$
+BEGIN
+	IF EXISTS(
+		SELECT *
+		FROM Tesi AS T
+		WHERE T.ID_Te <> NEW.ID_Te AND T.Contenuto = NEW.Contenuto
+	)
+	THEN RAISE EXCEPTION 'Tesi già esistente sotto altro ID e altra richiesta';
+	END IF;
+	RETURN NEW;
+END;
+$TesiUnique$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER TesiUniqueTrigger
+	BEFORE INSERT OR UPDATE ON Tesi
+	FOR EACH ROW 
+EXECUTE FUNCTION TesiUnique();
+
+CREATE OR REPLACE FUNCTION SedutaAggiungiVotoSuTesi()
+	RETURNS trigger AS
+$SedutaAggiungiVotoSuTesi$
+BEGIN
+	IF ISNOTNULL(NEW.VotoFinale) AND ISNULL(NEW.ID_Te)
+		THEN RAISE EXCEPTION 'Tesi mancante per voto';
+	ENDIF;
+	RETURN NEW;
+END
+$SedutaAggiungiVotoSuTesi$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER SedutaAggiungiVotoSuTesiTrigger
+	BEFORE UPDATE ON Tesi
+	FOR EACH ROW
+EXECUTE FUNCTION SedudaAggiungiVotoSuTesiTrigger();

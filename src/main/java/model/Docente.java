@@ -24,11 +24,11 @@ public class Docente extends Utente{
         return false;
     }
 
-    public Tirocinio aggiungiTirocinio(String nome, String descrizione){
-        return new TirocinioInterno(nome, descrizione, this);
+    public Tirocinio aggiungiTirocinio(String nome, String descrizione,LocalDate data){
+        return new TirocinioInterno(nome, descrizione, this,data);
     }
-    public Tirocinio aggiungiTirocinio(String nome, String descrizione, String nomeAzienda, String referente){
-        return new TirocinioEsterno(nome, descrizione, this, nomeAzienda, referente);
+    public Tirocinio aggiungiTirocinio(String nome, String descrizione, LocalDate data, String nomeAzienda, String referente){
+        return new TirocinioEsterno(nome, descrizione, this,data, nomeAzienda, referente);
     }
     public Boolean isCoordinatore(){
         return coordinatore;
@@ -36,8 +36,8 @@ public class Docente extends Utente{
     public void setCoordinatore(boolean coordinatore){
         this.coordinatore = coordinatore;
     }
-    public boolean equals(Docente obj) {
-        if (obj.getCognome().equals(cognome) && obj.getNome().equals(nome) && obj.getPassword().equals(password) && obj.getLogin().equals(login) && obj.getEmail().equals(email))
+        public boolean equals(Docente obj) {
+        if (obj.getClass()==Docente.class && obj.getCognome().equals(cognome) && obj.getNome().equals(nome) && obj.getPassword().equals(password) && obj.getLogin().equals(login) && obj.getEmail().equals(email))
             return true;
         return false;
     }

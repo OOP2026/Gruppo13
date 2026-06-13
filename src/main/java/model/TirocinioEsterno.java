@@ -1,11 +1,13 @@
 package model;
 
+import java.time.LocalDate;
+
 public class TirocinioEsterno extends Tirocinio{
     protected String nomeAzienda;
     protected String referente;
 
-    public TirocinioEsterno(String nome, String descrizione, Docente relatore,String nomeAzienda,String referente) {
-        super(nome, descrizione, relatore);
+    public TirocinioEsterno(String nome, String descrizione, Docente relatore, LocalDate data,String nomeAzienda, String referente) {
+        super(nome, descrizione, relatore,data);
         this.nomeAzienda = nomeAzienda;
         this.referente = referente;
     }
@@ -13,21 +15,8 @@ public class TirocinioEsterno extends Tirocinio{
     public String getNomeAzienda() {
         return nomeAzienda;
     }
-
     public String getReferente() {
         return referente;
-    }
-    public void setNome(String nome){
-        this.nome=nome;
-    }
-    public void setDescrizione(String descrizione){
-        this.descrizione=descrizione;
-    }
-    public String getNome(){
-        return nome;
-    }
-    public String getDescrizione(){
-        return descrizione;
     }
 
     @Override

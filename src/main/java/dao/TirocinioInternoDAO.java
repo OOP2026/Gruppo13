@@ -1,4 +1,4 @@
 package dao;
 
-public interface TirocinioInternoDAO {
+public interface TirocinioInternoDAO extends TirocinioDAO{
 }

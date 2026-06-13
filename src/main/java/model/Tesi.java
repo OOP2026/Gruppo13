@@ -4,7 +4,6 @@ public class Tesi {
     private char stato='?';
     private String contenuto;
     private Richiesta richiesta;
-    private Seduta seduta;
 
     public Tesi(String contenuto,Richiesta richiesta){
         this.contenuto = contenuto;
@@ -29,12 +28,4 @@ public class Tesi {
     public void setRichiesta(Richiesta richiesta) {
         this.richiesta = richiesta;
     }
-    public Seduta getSeduta() {
-        return seduta;
-    }
-    public void setSeduta(Seduta seduta) {
-        this.seduta = seduta;
-    }
-
-
 }

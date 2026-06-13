@@ -6,7 +6,6 @@ public class Richiesta {
     private char stato='?';
     private LocalDate data;
     private Studente studente;
-    private Tesi tesi;
     private Tirocinio tirocinio;
     public Richiesta(LocalDate data,Studente studente,Tirocinio tirocinio) {
         this.data = data;
@@ -29,12 +28,6 @@ public class Richiesta {
     }
     public void setStato(char stato) {
         this.stato = stato;
-    }
-    public Tesi getTesi() {
-        return tesi;
-    }
-    public void setTesi(Tesi tesi) {
-        this.tesi = tesi;
     }
     public String toString(){
         return ("Richiesta del "+data.toString()+":"+tirocinio.toString()+" stato:"+stato+"\n");

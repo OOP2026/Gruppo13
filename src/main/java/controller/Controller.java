@@ -14,9 +14,9 @@ public class Controller {
 	public Controller() {
 		//Integrità con il DB dei dati
 		//valori di test da eliminare
-		docenti.add(new Docente("pippo", "poppo", "pipposei", "pippo06", "pippo@pippo.it", false));
-		studenti.add(new Studente("pippo", "poppo", "pipposei", "pippo06", "pippo@pippo.it","P01"));
-		tirocini.add(new Tirocinio("","",docenti.get(0)));
+		docenti.add(new Docente("pippo", "poppo", "pippo06", "pippo6", "pippo@pippo.com", false));
+		studenti.add(new Studente("pippo", "poppo", "pippo06", "pippo6", "pippo@pippo.com","PIPPOPIPPO"));
+		tirocini.add(new Tirocinio("","",docenti.get(0),LocalDate.now()));
 		richieste.add(new Richiesta(LocalDate.now(),studenti.get(0),tirocini.get(0)));
 		tesi.add(new Tesi("www.pippo.it",richieste.get(0)));
 		sedute.add(new Seduta(LocalDate.now(),docenti.get(0)));
@@ -249,7 +249,7 @@ public class Controller {
 	//may be null
 	public Seduta cercaSedutaDiLaurea(Docente d,LocalDate data){
 		for (Seduta x : sedute) {
-			if(x.getDocente().equals(d))
+			if(x.getDocente().equals(d) && x.getData().equals(data))
 				return x;
 			}
 		return null;
