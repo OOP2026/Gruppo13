@@ -19,7 +19,7 @@ public class Controller {
 		tirocini.add(new Tirocinio("","",docenti.get(0),LocalDate.now()));
 		richieste.add(new Richiesta(LocalDate.now(),studenti.get(0),tirocini.get(0)));
 		tesi.add(new Tesi("www.pippo.it",richieste.get(0)));
-		sedute.add(new Seduta(LocalDate.now(),docenti.get(0)));
+		sedute.add(new Seduta(LocalDate.now(),LocalTime.now(),docenti.get(0)));
 		sedute.get(0).setTesi(tesi.get(0));
 
 	}
@@ -60,16 +60,16 @@ public class Controller {
 	}
 
 
-	public boolean nuovoTirocinioEsterno(Docente docente,String nome, String descrizione,String nomeAzienda,String referente){
-		Tirocinio x=docente.aggiungiTirocinio(nome,descrizione,nomeAzienda,referente);
+	public boolean nuovoTirocinioEsterno(Docente docente,String nome, String descrizione,LocalDate data,String nomeAzienda,String referente){
+		Tirocinio x=docente.aggiungiTirocinio(nome,descrizione,data,nomeAzienda,referente);
 		//integrità con DB
 		//se DB Approva Modifica
 		tirocini.add(x);
 		return true;
 	}
 
-	public boolean nuovoTirocinioInterno(Docente docente,String nome, String descrizione) {
-		Tirocinio t=docente.aggiungiTirocinio(nome,descrizione);
+	public boolean nuovoTirocinioInterno(Docente docente,String nome, String descrizione,LocalDate data) {
+		Tirocinio t=docente.aggiungiTirocinio(nome,descrizione,data);
 		//integrità con DB
 		//se DB Approva Modifica
 		tirocini.add(t);
@@ -211,9 +211,9 @@ public class Controller {
 		return user.visualizzaTesi(tesi);
 	}
 
-	public boolean aggiungiSedutaDiLaurea(Docente d,LocalDate data) throws NullPointerException{
+	public boolean aggiungiSedutaDiLaurea(Docente d,LocalDate data,LocalTime ora) throws NullPointerException{
 		try{
-			sedute.add(d.aggiungiSedutaDiLaurea(data));
+			sedute.add(d.aggiungiSedutaDiLaurea(data,ora));
 			return true;
 		}
 		catch(NullPointerException e){

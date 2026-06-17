@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class Docente extends Utente{
     protected boolean coordinatore;
@@ -81,8 +82,8 @@ public class Docente extends Utente{
         return null;
     }
 
-    public Seduta aggiungiSedutaDiLaurea(LocalDate data){
-        return new Seduta(data,this);
+    public Seduta aggiungiSedutaDiLaurea(LocalDate data, LocalTime ora){
+        return new Seduta(data,ora,this);
     }
 
     public boolean aggiungiVotoSedutaDiLaurea(Seduta seduta, int v){

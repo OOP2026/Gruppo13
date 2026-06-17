@@ -215,7 +215,7 @@ EXECUTE FUNCTION RichiestaAttiva();
 
 CREATE OR REPLACE FUNCTION SedutaControlloDataRichiesta()
 	RETURNS trigger AS 
-$SedutaControlloDataTirocinio$
+$SedutaControlloDataRichiesta$
 DECLARE
 	data_richiesta DATE;
 BEGIN
@@ -230,7 +230,7 @@ BEGIN
 
 	RETURN NEW;
 END;	
-$SedutaControlloDataTirocinio$ LANGUAGE plpgsql;
+$SedutaControlloDataRichiesta$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER SedutaControlloDataRichiestaTrigger
 	BEFORE INSERT OR UPDATE ON SEDUTA
@@ -309,4 +309,29 @@ $SedutaAggiungiVotoSuTesi$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER SedutaAggiungiVotoSuTesiTrigger
 	BEFORE UPDATE ON Tesi
 	FOR EACH ROW
-EXECUTE FUNCTION SedudaAggiungiVotoSuTesiTrigger();
+EXECUTE FUNCTION SedutaAggiungiVotoSuTesiTrigger();
+
+CREATE OR REPLACE FUNCTION SedutaControlloDataTirocinio()
+	RETURNS trigger AS 
+$SedutaControlloDataTirocinio$
+DECLARE
+	data_tirocinio DATE;
+BEGIN
+	SELECT T.Data INTO data_tirocinio
+	FROM TESI Te
+	JOIN RICHIESTA R ON Te.ID_Ri = R.ID_Ri
+	JOIN TIROCINIO T ON R.ID_Ti=T.ID_Ti
+	WHERE Te.ID_Te = NEW.ID_Te ;
+
+	IF NEW.Data <= data_richiesta THEN
+		RAISE EXCEPTION 'Seduta precedente rispetto alla richiesta di tirocinio.';
+	END IF;
+
+	RETURN NEW;
+END;	
+$SedutaControlloDataTirocinio$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER SedutaControlloDataTirocinioTrigger
+	BEFORE INSERT OR UPDATE ON Seduta
+	FOR EACH ROW
+EXECUTE FUNCTION SedutaControlloDataTirocinio();
