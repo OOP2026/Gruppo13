@@ -212,9 +212,7 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally{
-            return null;
-        }
+        return null;
     }
     //MAY BE NULL
     public String getCognome(String username,Connection conn) throws SQLException{
@@ -228,9 +226,7 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally{
-            return null;
-        }
+        return null;
     }
     //MAY BE NULL
     public String getEmail(String username,Connection conn) throws SQLException{
@@ -244,9 +240,7 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally{
-            return null;
-        }
+        return null;
     }
     //MAY BE NULL
     public String getPassword(String username,Connection conn) throws SQLException{
@@ -260,8 +254,6 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally{
-            return null;
-        }
+        return null;
     }
 }

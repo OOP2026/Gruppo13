@@ -80,9 +80,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally{
-            return null;
-        }
+        return null;
     }
     //MAY BE NULL
     public String getCognome(String username,Connection conn) throws SQLException{
@@ -96,9 +94,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally{
-            return null;
-        }
+        return null;
     }
     //MAY BE NULL
     public String getEmail(String username,Connection conn) throws SQLException{
@@ -112,9 +108,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally{
-            return null;
-        }
+        return null;
     }
     //MAY BE NULL
     public String getPassword(String username,Connection conn) throws SQLException{
@@ -128,9 +122,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally{
-            return null;
-        }
+        return null;
     }
     public String getMatricola(String username,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("SELECT Matricola FROM Studente WHERE Studente.Login = '"+username+"'");
@@ -143,18 +135,43 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally{
-            return null;
-        }
+        return null;
     }
     public boolean aggiungiTesi(String matricola, String contenuto, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn) throws SQLException{
-
+        PreparedStatement stmt=conn.prepareStatement("INSERT INTO Tesi(Contenuto,ID_Ri) VALUES ('"+contenuto+"', (SELECT ID_Ri FROM Richiesta R JOIN Tirocinio T ON T.ID_Ti=R.ID_Ti WHERE T.Nome='"+nometirocinio+"' AND T.Data='"+datatirocinio.toString()+"'AND T.Login = '"+docente+"')))");
+        try{
+            stmt.executeQuery();
+            return true;
+        }
+        catch(SQLException e) {
+            System.out.println("Errore nell'esecuzione della query\n");
+            e.printStackTrace();
+            return false;
+        }
     }
     public boolean aggiungiRichiesta(String matricola, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn)throws SQLException{
-
+        PreparedStatement stmt=conn.prepareStatement("INSERT INTO Richiesta(Login,Data,ID_Ti) VALUES ((SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'),'"+LocalDate.now().toString()+"',(SELECT ID_Ti FROM Tirocinio T WHERE T.Nome='"+nometirocinio+"' AND T.Data='"+datatirocinio.toString()+"' AND T.Login='"+docente+"'))");
+        try{
+            stmt.executeQuery();
+            return true;
+        }
+        catch(SQLException e) {
+            System.out.println("Errore nell'esecuzione della query\n");
+            e.printStackTrace();
+            return false;
+        }
     }
     public boolean aggiornaTesi(String matricola,String contenuto,String nometirocinio, LocalDate datatirocinio, String docente,Connection conn) throws SQLException{
-
+           PreparedStatement stmt = conn.prepareStatement("UPDATE Tesi SET Tesi.Contenuto = '"+contenuto+"' WHERE ID_Ri=(Select ID_Ri from Richiesta WHERE Richiesta.Login = (SELECT Login FROM Studente S WHERE S.Matricola='"+matricola+"') AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"'))");
+           try{
+               stmt.executeQuery();
+               return true;
+            }
+           catch(SQLException e){
+                System.out.println("Errore nell'esecuzione della query\n");
+                e.printStackTrace();
+                return false;
+            }
     }
     public boolean prenotaSedutaDiLaurea(String matricola, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn) throws SQLException{
 
