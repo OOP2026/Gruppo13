@@ -173,16 +173,49 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
                 return false;
             }
     }
-    public boolean prenotaSedutaDiLaurea(String matricola, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn) throws SQLException{
-
+    public boolean prenotaSedutaDiLaurea(String matricola, LocalDate data, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn) throws SQLException{
+        PreparedStatement stmt=conn.prepareStatement("UPDATE Seduta SET ID_Te=(SELECT ID_Te FROM Tesi WHERE ID_Ri = (SELECT ID_RI FROM Richiesta WHERE Login='"+matricola+"' AND ID_Ti=(SELECT ID_Ti FROM Tirocinio WHERE Nome='"+nometirocinio+"' AND Data='"+datatirocinio.toString()+"' AND Login='"+docente+"'))) WHERE Login='"+docente+"' AND Data='"+data.toString()+"'");
+        try{
+            stmt.executeQuery();
+            return true;
+        }
+        catch(SQLException e) {
+            System.out.println("Errore nell'esecuzione della query\n");
+            e.printStackTrace();
+            return false;
+        }
     }
     public ResultSet getAllTesi(String matricola,Connection conn) throws SQLException{
-
+        PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Tesi WHERE ID_Ri=ANY(SELECT ID_Ri from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'))");
+        try{
+            return stmt.executeQuery();
+        }
+        catch(SQLException e){
+            System.out.println("Errore nell'esecuzione della query\n");
+            e.printStackTrace();
+        }
+        return null;
     }
     public ResultSet getAllRichiesta(String matricola,Connection conn) throws SQLException{
-
+        PreparedStatement stmt=conn.prepareStatement("SELECT * from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"')");
+        try{
+            return stmt.executeQuery();
+        }
+        catch(SQLException e){
+            System.out.println("Errore nell'esecuzione della query\n");
+            e.printStackTrace();
+        }
+        return null;
     }
     public ResultSet getAllStudente(Connection conn) throws SQLException{
-
+        PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Studente");
+        try{
+            return stmt.executeQuery();
+        }
+        catch(SQLException e){
+            System.out.println("Errore nell'esecuzione della query\n");
+            e.printStackTrace();
+        }
+        return null;
     }
 }
