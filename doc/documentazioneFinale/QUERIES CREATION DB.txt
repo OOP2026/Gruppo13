@@ -47,7 +47,7 @@ CREATE TABLE RICHIESTA(
 CREATE TABLE TESI(
 	ID_Te SERIAL PRIMARY KEY,
 	Stato CHAR NOT NULL DEFAULT '?',
-	Contenuto VARCHAR(2048),
+	Contenuto VARCHAR(2048) UNIQUE,
 	ID_Ri INT NOT NULL UNIQUE REFERENCES RICHIESTA(ID_Ri),
 	CONSTRAINT CheckStatoTesi CHECK(Stato='?' OR Stato='V' OR Stato='X')
 );
@@ -58,7 +58,7 @@ CREATE TABLE SEDUTA(
 	VotoFinale INT,
 	ID_Te INT NOT NULL UNIQUE REFERENCES TESI(ID_Te),
 	Login VARCHAR(32) NOT NULL REFERENCES DOCENTE(Login),
-	CONSTRAINT CheckVotoFinaleSeduta CHECK(VotoFinale>=0 AND VotoFinale<=32 AND VotoFinale!=31)
+	CONSTRAINT CheckVotoFinaleSeduta CHECK(VotoFinale>=0 AND VotoFinale<=111)
 );
 
 
@@ -110,7 +110,7 @@ BEGIN
 	IF EXISTS(
 		SELECT *
 		FROM Richiesta AS R
-		WHERE R.ID_Ri <> NEW.ID_Ri AND R.ID_Ti = NEW.ID_Ti AND R.Login = NEW.Login AND ((NEW.Stato != 'X' AND NEW.Data<R.Data) OR(R.Stato!=X AND R.Data<NEW.Data))
+		WHERE R.ID_Ri <> NEW.ID_Ri AND R.ID_Ti = NEW.ID_Ti AND R.Login = NEW.Login AND ((NEW.Stato != 'X' AND NEW.Data<R.Data) OR(R.Stato!='X' AND R.Data<NEW.Data))
 		)
 		THEN RAISE EXCEPTION 'Richiesta già esistente sotto altro ID';
 	END IF;
@@ -275,33 +275,13 @@ CREATE OR REPLACE TRIGGER SedutaRimuoviAnnullamentoTesiTrigger
 	FOR EACH ROW
 EXECUTE FUNCTION SedutaRimuoviAnnullamentoTesi();
 
-CREATE OR REPLACE FUNCTION TesiUnique()
-	RETURNS trigger AS 
-$TesiUnique$
-BEGIN
-	IF EXISTS(
-		SELECT *
-		FROM Tesi AS T
-		WHERE T.ID_Te <> NEW.ID_Te AND T.Contenuto = NEW.Contenuto
-	)
-	THEN RAISE EXCEPTION 'Tesi già esistente sotto altro ID e altra richiesta';
-	END IF;
-	RETURN NEW;
-END;
-$TesiUnique$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE TRIGGER TesiUniqueTrigger
-	BEFORE INSERT OR UPDATE ON Tesi
-	FOR EACH ROW 
-EXECUTE FUNCTION TesiUnique();
-
 CREATE OR REPLACE FUNCTION SedutaAggiungiVotoSuTesi()
 	RETURNS trigger AS
 $SedutaAggiungiVotoSuTesi$
 BEGIN
 	IF ISNOTNULL(NEW.VotoFinale) AND ISNULL(NEW.ID_Te)
 		THEN RAISE EXCEPTION 'Tesi mancante per voto';
-	ENDIF;
+	END IF;
 	RETURN NEW;
 END
 $SedutaAggiungiVotoSuTesi$ LANGUAGE plpgsql;
@@ -309,7 +289,7 @@ $SedutaAggiungiVotoSuTesi$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER SedutaAggiungiVotoSuTesiTrigger
 	BEFORE UPDATE ON Tesi
 	FOR EACH ROW
-EXECUTE FUNCTION SedutaAggiungiVotoSuTesiTrigger();
+EXECUTE FUNCTION SedutaAggiungiVotoSuTesi();
 
 CREATE OR REPLACE FUNCTION SedutaControlloDataTirocinio()
 	RETURNS trigger AS 
@@ -323,7 +303,7 @@ BEGIN
 	JOIN TIROCINIO T ON R.ID_Ti=T.ID_Ti
 	WHERE Te.ID_Te = NEW.ID_Te ;
 
-	IF NEW.Data <= data_richiesta THEN
+	IF NEW.Data <= data_tirocinio THEN
 		RAISE EXCEPTION 'Seduta precedente rispetto alla richiesta di tirocinio.';
 	END IF;
 

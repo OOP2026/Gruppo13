@@ -63,7 +63,7 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         }
     }
     public boolean aggiungiVotoSedutaDiLaurea(int voto, LocalDate data,LocalTime ora, String docente,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("UPDATE Seduta SET VotoFinale = "+voto+" WHERE Seduta.Data = '"+data.toString()+"' AND Seduta.Ora ='"+ora.toString()+"' AND Seduta.Login = '"+docente+"'");
+        PreparedStatement stmt=conn.prepareStatement("UPDATE Seduta SET VotoFinale = '"+voto+"' WHERE Seduta.Data = '"+data.toString()+"' AND Seduta.Ora ='"+ora.toString()+"' AND Seduta.Login = '"+docente+"'");
         try{
             stmt.executeQuery();
             return true;

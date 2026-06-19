@@ -1,0 +1,38 @@
+
+INSERTS FATTE
+STUDENTE "PIPPO","POPPO","PIPPO06","PIPPO6","PIPPO@PIPPO.COM","PIPPOPIPPO01"
+DOCENTE "PIPPO","POPPO","PIPPO06","PIPPO6","PIPPO@PIPPO.COM",true
+TIROCINIO 'TIROCINIO ESCLUSIVO PER PIPPO POPPO','PIPPO POPPO','2026-06-18','PIPPO6'
+TIROCINIOESTERNO '2', 'PIPPOPOPPO CO.','PIPPO POPPO'
+RICHIESTA '2026-8-10','V','PIPPO6','2'
+TESI 'V','PIPPO.COM/PIPPOTIROCINANTE','2'
+
+
+
+
+
+
+
+
+
+
+
+
+
+\d
+\df
+\dt
+
+select event_object_schema as table_schema,
+       event_object_table as table_name,
+       trigger_schema,
+       trigger_name,
+       string_agg(event_manipulation, ',') as event,
+       action_timing as activation,
+       action_condition as condition,
+       action_statement as definition
+from information_schema.triggers
+group by 1,2,3,4,6,7,8
+order by table_schema,
+         table_name;
+SELECT table_name FROM information_schema.tables WHERE table_schema='public'

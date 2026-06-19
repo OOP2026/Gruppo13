@@ -14,14 +14,6 @@ public class Controller {
 	public Controller() {
 		//Integrità con il DB dei dati
 		//valori di test da eliminare
-		docenti.add(new Docente("pippo", "poppo", "pippo06", "pippo6", "pippo@pippo.com", false));
-		studenti.add(new Studente("pippo", "poppo", "pippo06", "pippo6", "pippo@pippo.com","PIPPOPIPPO"));
-		tirocini.add(new Tirocinio("","",docenti.get(0),LocalDate.now()));
-		richieste.add(new Richiesta(LocalDate.now(),studenti.get(0),tirocini.get(0)));
-		tesi.add(new Tesi("www.pippo.it",richieste.get(0)));
-		sedute.add(new Seduta(LocalDate.now(),LocalTime.now(),docenti.get(0)));
-		sedute.get(0).setTesi(tesi.get(0));
-
 	}
 
 	public Utente login(String email, String password, boolean isDocente){
@@ -30,11 +22,13 @@ public class Controller {
 			for(Docente x:docenti){
 				log=x.logIn(email, password);
 			}
+			//Integra DB
 		}
 		else{
 			for (Studente x : studenti){
 				log=x.logIn(email, password);
 			}
+			//Integra DB
 		}
 		return log;
 	}

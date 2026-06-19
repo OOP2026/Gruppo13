@@ -8,7 +8,7 @@ import java.time.LocalTime;
 
 public class SedutaImplementazionePostgres implements SedutaDAO {
     public ResultSet getTesi(LocalDate data, LocalTime ora, String docente, Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Tesi WHERE Tesi.IdTe=(SELECT ID_Te FROM Seduta WHERE Login='"+docente+"'AND Data='"+data.toString()+"' AND Ora='"+ora.toString()+"')");
+        PreparedStatement stmt=conn.prepareStatement("SELECT 1 FROM Tesi WHERE Tesi.IdTe=(SELECT ID_Te FROM Seduta WHERE Login='"+docente+"'AND Data='"+data.toString()+"' AND Ora='"+ora.toString()+"')");
         try{
             return stmt.executeQuery();
         }
@@ -43,18 +43,7 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
         }
         return -1;
     }
-    public boolean setVotoFinale(int voto,LocalDate data,LocalTime ora,String docente,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("UPDATE Seduta SET Seduta.VotoFinale="+voto+" WHERE Login='"+docente+"'AND Data='"+data.toString()+"' AND Ora='"+ora.toString()+"'");
-        try{
-            stmt.executeQuery();
-            return true;
-        }
-        catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
-        }
-        return false;
-    }
+
     public ResultSet getAllSeduta(Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Seduta");
         try{
