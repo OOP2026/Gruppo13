@@ -33,10 +33,8 @@ public class Studente extends Utente {
         }
         return "";
     }
-    public boolean equals(Studente obj) {
-        if (obj.getCognome().equals(cognome) && obj.getNome().equals(nome) && obj.getPassword().equals(password) && obj.getLogin().equals(login) && obj.getEmail().equals(email) && obj.getMatricola().equals(matricola))
-            return true;
-        return false;
+    public boolean isSameStudente(Studente obj) {
+        return (obj.getCognome().equals(cognome) && obj.getNome().equals(nome) && obj.getPassword().equals(password) && obj.getLogin().equals(login) && obj.getEmail().equals(email) && obj.getMatricola().equals(matricola));
     }
 
     public boolean aggiornaTesi(Tesi tesi,String contenuto) {
@@ -56,7 +54,7 @@ public class Studente extends Utente {
     }
 
     public boolean PrenotaSedutadiLaurea(Seduta s, Tesi t) {
-        if(t.getRichiesta().getStudente().equals(this)&&t.getStato()=='V'&&t!=null){
+        if(t!=null&&t.getRichiesta().getStudente().equals(this)&&t.getStato()=='V'){
             s.setTesi(t);
             return true;
         }

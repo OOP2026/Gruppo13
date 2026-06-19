@@ -10,6 +10,7 @@ public class Seduta {
     private Docente docente;
     public Seduta(LocalDate data, LocalTime ora,Docente docente) {
         this.data = data;
+        this.ora = ora;
         this.voto = -1;
         this.tesi = null;
         this.docente = docente;
@@ -37,7 +38,7 @@ public class Seduta {
     @Override
     public String toString() {
         String s = "Seduta del "+data.toString()+" alle "+ora.toString()+" del docente "+docente.getCognome()+" "+docente.getNome()+"\n"+"";
-        if(tesi!=null)
+        if(tesi==null)
             s+="Libera";
         else if (voto>=-1)
             s+="Conclusa con voto"+voto+", tesi allegata:"+tesi.getContenuto();

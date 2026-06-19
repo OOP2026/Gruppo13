@@ -37,10 +37,8 @@ public class Docente extends Utente{
     public void setCoordinatore(boolean coordinatore){
         this.coordinatore = coordinatore;
     }
-        public boolean equals(Docente obj) {
-        if (obj.getClass()==Docente.class && obj.getCognome().equals(cognome) && obj.getNome().equals(nome) && obj.getPassword().equals(password) && obj.getLogin().equals(login) && obj.getEmail().equals(email))
-            return true;
-        return false;
+    public boolean isSameDocente(Docente obj) {
+        return (obj.getCognome().equals(cognome) && obj.getNome().equals(nome) && obj.getPassword().equals(password) && obj.getLogin().equals(login) && obj.getEmail().equals(email));
     }
     @Override
     public String toString() {
