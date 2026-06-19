@@ -15,8 +15,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         } catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean rifiutaRichiesta(String studente, String nometirocinio, LocalDate datatirocinio,String docente,Connection conn) throws SQLException{
         PreparedStatement stmt = conn.prepareStatement("UPDATE Richiesta SET Richiesta.Stato = 'X' WHERE Richiesta.Login = "+studente+" AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ="+nometirocinio+" AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = "+docente+")");
@@ -26,8 +29,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         } catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean rifiutaTesi(String studente, String nometirocinio, LocalDate datatirocinio, String docente,Connection conn) throws SQLException{
         PreparedStatement stmt = conn.prepareStatement("UPDATE Tesi SET Tesi.Stato = 'X' WHERE ID_Ri=(Select ID_Ri from Richiesta WHERE Richiesta.Login = '"+studente+"' AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"'))");
@@ -37,8 +43,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         } catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean accettaTesi(String studente, String nometirocinio, LocalDate datatirocinio, String docente,Connection conn) throws SQLException{
         PreparedStatement stmt = conn.prepareStatement("UPDATE Tesi SET Tesi.Stato = 'V' WHERE ID_Ri=(Select ID_Ri from Richiesta WHERE Richiesta.Login = '"+studente+"' AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"'))");
@@ -48,8 +57,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         } catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean aggiungiSedutaDiLaurea(LocalDate data, LocalTime ora, String docente, Connection conn) throws SQLException{
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO Seduta() VALUES ('"+data+"','"+docente+"')");
@@ -59,8 +71,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         } catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean aggiungiVotoSedutaDiLaurea(int voto, LocalDate data,LocalTime ora, String docente,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("UPDATE Seduta SET VotoFinale = '"+voto+"' WHERE Seduta.Data = '"+data.toString()+"' AND Seduta.Ora ='"+ora.toString()+"' AND Seduta.Login = '"+docente+"'");
