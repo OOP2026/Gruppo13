@@ -88,7 +88,7 @@ public class Controller {
 	public List<Richiesta> getRichiesta(Utente user,boolean isDocente){
 		ArrayList<Richiesta> r=new ArrayList<>();
 		for(Richiesta x:richieste){
-			if(!isDocente&&x.getStudente().equals((Studente)user)||isDocente&&x.getTirocinio().getRelatore().equals((Docente)user))
+			if(!isDocente&&x.getStudente().equals(user)||isDocente&&x.getTirocinio().getRelatore().equals(user))
 				r.add(x);
 		}
 		return r;
@@ -225,7 +225,7 @@ public class Controller {
 	public List<Seduta> getSedutaDiLaurea(Utente u, boolean isDocente){
 		ArrayList<Seduta> lista = new ArrayList<>();
 		for(Seduta x:sedute){
-			if(isDocente&&x.getDocente().equals((Docente)u)||!isDocente)
+			if(isDocente&&x.getDocente().equals(u)||!isDocente)
 				lista.add(x);
 		}
 		return lista;
@@ -234,7 +234,7 @@ public class Controller {
 	public String vediSedutaDiLaurea(Utente u,boolean isDocente){
 		String s="Elenco Sedute:\n";
 		for(Seduta x:sedute){
-			if(isDocente&&x.getDocente().equals((Docente)u)||!isDocente&&x.getTesi().getRichiesta().getStudente().equals((Studente)u))
+			if(isDocente&&x.getDocente().equals(u)||!isDocente&&x.getTesi().getRichiesta().getStudente().equals(u))
 				s=s.concat(x.toString());
 		}
 		return s;
