@@ -17,8 +17,11 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return null;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean setPassword(String username, String password,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("UPDATE Studente set Password = '"+password+"' WHERE Docente.Login = '"+username+"'");
@@ -29,8 +32,11 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean setUsername(String oldusername, String newusername,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("UPDATE Studente set Login = '"+newusername+"' WHERE Studente.Login = '"+oldusername+"'");
@@ -41,8 +47,11 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean login(String username,String password,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("UPDATE Studente set Stato = TRUE WHERE Studente.Login = '"+username+"' AND Password = '"+password+"'");
@@ -53,8 +62,11 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean logout(String username,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("UPDATE Studente set Stato = FALSE WHERE Studente.Login = '"+username+"'");
@@ -65,8 +77,11 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     //MAY BE NULL
     public String getNome(String username,Connection conn) throws SQLException{
@@ -79,6 +94,9 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return null;
     }
@@ -94,6 +112,9 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     //MAY BE NULL
@@ -107,6 +128,9 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return null;
     }
@@ -122,6 +146,9 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     public String getMatricola(String username,Connection conn) throws SQLException{
@@ -135,6 +162,9 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     public boolean aggiungiTesi(String matricola, String contenuto, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn) throws SQLException{
@@ -146,8 +176,11 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean aggiungiRichiesta(String matricola, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn)throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("INSERT INTO Richiesta(Login,Data,ID_Ti) VALUES ((SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'),'"+LocalDate.now().toString()+"',(SELECT ID_Ti FROM Tirocinio T WHERE T.Nome='"+nometirocinio+"' AND T.Data='"+datatirocinio.toString()+"' AND T.Login='"+docente+"'))");
@@ -158,8 +191,11 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean aggiornaTesi(String matricola,String contenuto,String nometirocinio, LocalDate datatirocinio, String docente,Connection conn) throws SQLException{
            PreparedStatement stmt = conn.prepareStatement("UPDATE Tesi SET Tesi.Contenuto = '"+contenuto+"' WHERE ID_Ri=(Select ID_Ri from Richiesta WHERE Richiesta.Login = (SELECT Login FROM Studente S WHERE S.Matricola='"+matricola+"') AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"'))");
@@ -170,8 +206,11 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
            catch(SQLException e){
                 System.out.println("Errore nell'esecuzione della query\n");
                 e.printStackTrace();
-                return false;
             }
+           finally {
+               stmt.close();
+           }
+            return false;
     }
     public boolean prenotaSedutaDiLaurea(String matricola, LocalDate data, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("UPDATE Seduta SET ID_Te=(SELECT ID_Te FROM Tesi WHERE ID_Ri = (SELECT ID_RI FROM Richiesta WHERE Login='"+matricola+"' AND ID_Ti=(SELECT ID_Ti FROM Tirocinio WHERE Nome='"+nometirocinio+"' AND Data='"+datatirocinio.toString()+"' AND Login='"+docente+"'))) WHERE Login='"+docente+"' AND Data='"+data.toString()+"'");
@@ -182,8 +221,11 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public ResultSet getAllTesi(String matricola,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Tesi WHERE ID_Ri=ANY(SELECT ID_Ri from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'))");
@@ -193,6 +235,9 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return null;
     }
@@ -205,6 +250,9 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     public ResultSet getAllStudente(Connection conn) throws SQLException{
@@ -215,6 +263,9 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return null;
     }

@@ -20,6 +20,9 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     public String getReferente(String docente,String nome, LocalDate data,Connection conn)throws SQLException{
@@ -33,6 +36,9 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     public ResultSet queryViaTirocinioEsterno(String query, Connection conn)throws SQLException{
@@ -44,6 +50,9 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     public ResultSet getAllTirocinioEsterno(Connection conn)throws SQLException{
@@ -54,6 +63,9 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return null;
     }

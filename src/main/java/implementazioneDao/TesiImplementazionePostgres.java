@@ -20,6 +20,9 @@ public class TesiImplementazionePostgres implements TesiDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return '\0';
     }
     public boolean setStato(char stato, String studente, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn) throws SQLException{
@@ -31,8 +34,11 @@ public class TesiImplementazionePostgres implements TesiDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public ResultSet queryViaTesi(String query, Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement(query);
@@ -42,8 +48,11 @@ public class TesiImplementazionePostgres implements TesiDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return null;
         }
+        finally {
+            stmt.close();
+        }
+        return null;
     }
     public ResultSet getAllTesi(Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Tesi");
@@ -53,8 +62,11 @@ public class TesiImplementazionePostgres implements TesiDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return null;
         }
+        finally {
+            stmt.close();
+        }
+        return null;
     }
     public boolean setContenuto(String contenuto,String studente, String nometirocinio, LocalDate datatirocinio, String docente,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("UPDATE Tesi SET Contenuto='"+contenuto+"' WHERE ID_Ri=(SELECT ID_Ri FROM Richiesta WHERE Login='"+studente+"' AND ID_Ti=(SELECT ID_Ti FROM Tirocinio WHERE Login='"+docente+"' AND Data='"+datatirocinio.toString()+"' AND Nome='"+nometirocinio+"'))");
@@ -65,8 +77,11 @@ public class TesiImplementazionePostgres implements TesiDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public String getContenuto(String studente, String nometirocinio, LocalDate datatirocinio, String docente,Connection conn) throws SQLException{
 
@@ -79,6 +94,9 @@ public class TesiImplementazionePostgres implements TesiDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return null;
     }

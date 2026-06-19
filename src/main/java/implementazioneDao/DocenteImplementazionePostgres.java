@@ -70,8 +70,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         } catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean aggiungiTirocinio(String nome,String descrizione, LocalDate data,String docente,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("INSERT INTO Tirocinio(Nome,Descrizione,Data,Login) VALUES ('"+nome+"','"+descrizione+"','"+data.toString()+"','"+docente+"')");
@@ -81,8 +84,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         } catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean isCoordinatore(String docente,Connection conn) throws SQLException{
         PreparedStatement stmt = conn.prepareStatement("SELECT Coordinatore FROM Docente WHERE Docente.Login = '"+docente+"'");
@@ -92,8 +98,12 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         } catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
+
     }
     public boolean setCoordinatore(boolean x,String docente, boolean coordinatore,Connection conn) throws SQLException{
         PreparedStatement stmt;
@@ -107,8 +117,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         } catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public ResultSet getAllTirocinio(String docente, Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Tirocinio WHERE Tirocinio.Login = '"+docente+"'");
@@ -117,8 +130,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         } catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return null;
         }
+        finally {
+            stmt.close();
+        }
+        return null;
     }
     public ResultSet getAllSeduta(String docente,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Seduta WHERE Seduta.Login = '"+docente+"'");
@@ -127,8 +143,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         } catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return null;
         }
+        finally {
+            stmt.close();
+        }
+        return null;
     }
     public ResultSet getAllDocente(Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Docente");
@@ -138,8 +157,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return null;
         }
+        finally {
+            stmt.close();
+        }
+        return null;
     }
     public ResultSet queryViaUtente(String query,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement(query);
@@ -149,8 +171,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return null;
         }
+        finally {
+            stmt.close();
+        }
+        return null;
     }
     public boolean setPassword(String username, String password,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("UPDATE Docente set Password = '"+password+"' WHERE Docente.Login = '"+username+"'");
@@ -161,8 +186,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean setUsername(String oldusername, String newusername,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("UPDATE Docente set Login = '"+newusername+"' WHERE Docente.Login = '"+oldusername+"'");
@@ -173,8 +201,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean login(String username,String password,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("UPDATE Docente set Stato = TRUE WHERE Docente.Login = '"+username+"' AND Password = '"+password+"'");
@@ -185,8 +216,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     public boolean logout(String username,Connection conn) throws SQLException{
         PreparedStatement stmt=conn.prepareStatement("UPDATE Docente set Stato = FALSE WHERE Docente.Login = '"+username+"'");
@@ -197,8 +231,11 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-            return false;
         }
+        finally {
+            stmt.close();
+        }
+        return false;
     }
     //MAY BE NULL
     public String getNome(String username,Connection conn) throws SQLException{
@@ -211,6 +248,9 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return null;
     }
@@ -226,6 +266,9 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     //MAY BE NULL
@@ -240,6 +283,9 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     //MAY BE NULL
@@ -253,6 +299,9 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return null;
     }

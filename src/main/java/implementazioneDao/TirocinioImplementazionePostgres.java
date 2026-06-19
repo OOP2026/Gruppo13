@@ -17,6 +17,9 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     public ResultSet queryViaTirocinio(String query, Connection conn) throws SQLException{
@@ -28,6 +31,9 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     public ResultSet getAllTirocinio(Connection conn) throws SQLException{
@@ -38,6 +44,9 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return null;
     }

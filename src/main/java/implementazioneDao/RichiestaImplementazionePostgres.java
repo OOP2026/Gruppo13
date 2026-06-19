@@ -17,6 +17,9 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return '\0';
     }
     public boolean setStato(char stato,LocalDate data,String studente, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn) throws SQLException{
@@ -29,6 +32,9 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return false;
     }
     public ResultSet queryViaRichiesta(String query, Connection conn) throws SQLException{
@@ -40,6 +46,9 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     public ResultSet getAllRichiesta(Connection conn) throws SQLException{
@@ -50,6 +59,9 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return null;
     }

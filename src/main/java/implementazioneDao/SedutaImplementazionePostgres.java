@@ -16,6 +16,9 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     public boolean setTesi(LocalDate data, LocalTime ora,String docente,String studente,String nometirocinio, LocalDate datatirocinio,Connection conn) throws SQLException{
@@ -27,6 +30,9 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return false;
     }
@@ -41,6 +47,9 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return -1;
     }
 
@@ -53,6 +62,9 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
+        finally {
+            stmt.close();
+        }
         return null;
     }
     public ResultSet queryViaSeduta(String query,Connection conn) throws SQLException{
@@ -63,6 +75,9 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
+        }
+        finally {
+            stmt.close();
         }
         return null;
     }
