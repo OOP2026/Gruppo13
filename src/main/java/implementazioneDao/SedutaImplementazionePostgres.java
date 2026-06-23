@@ -13,8 +13,7 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
             return conn.executeQuery("SELECT 1 FROM Tesi WHERE Tesi.IdTe=(SELECT ID_Te FROM Seduta WHERE Login='"+docente+"'AND Data='"+data.toString()+"' AND Ora='"+ora.toString()+"')");
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
 
         return null;
@@ -25,8 +24,7 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
             return true;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
 
         return false;
@@ -40,8 +38,7 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
             return v;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return -2;
     }
@@ -51,8 +48,7 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
             return conn.executeQuery("SELECT * FROM Seduta");
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
 
         return null;
@@ -62,8 +58,7 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
             return conn.executeQuery(query);
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
 
         return null;

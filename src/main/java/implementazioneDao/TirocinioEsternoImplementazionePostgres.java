@@ -17,8 +17,7 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
             return y;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return null;
@@ -33,8 +32,7 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
             return y;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }
@@ -43,8 +41,7 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
             return conn.executeQuery(query);
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }
@@ -53,8 +50,7 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
             return conn.executeQuery("SELECT * FROM Tirocinio NATURAL JOIN TirocinioEsterno");
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }

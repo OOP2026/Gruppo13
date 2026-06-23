@@ -16,8 +16,7 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
             return s;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
 
         return '\0';
@@ -28,8 +27,7 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
             return true;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
 
         return false;
@@ -39,8 +37,7 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
             return conn.executeQuery(query);
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
 
         return null;
@@ -50,8 +47,7 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
             return conn.executeQuery("SELECT * FROM Richiesta");
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }

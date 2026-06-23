@@ -8,6 +8,7 @@ import java.lang.Exception.*;
 import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
+import static implementazioneDao.SQLExceptionHandler.*;
 
 public class Controller {
 	ArrayList<Docente> docenti = new ArrayList<>();
@@ -48,8 +49,7 @@ public class Controller {
 					throw new InconsistencyException("Studente trovato in locale e non in db");
 			}
 			catch (SQLException e) {
-				System.out.println("Problema nell'esecuzione della query\n");
-				e.printStackTrace();
+				handleSQLException(e);
 			}
 		return log;
 	}
@@ -69,7 +69,7 @@ public class Controller {
 				e.printStackTrace();
 			}
 			catch (SQLException e) {
-				System.out.println("Problema nell'esecuzione della query\n");
+				handleSQLException(e);
 			}
 	}
 

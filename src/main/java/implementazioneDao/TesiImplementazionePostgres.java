@@ -17,8 +17,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return y;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return '\0';
     }
@@ -28,8 +27,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return true;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return false;
     }
@@ -38,8 +36,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return conn.executeQuery(query);
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }
@@ -48,8 +45,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return conn.executeQuery("SELECT * FROM Tesi");
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }
@@ -59,8 +55,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return true;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return false;
     }
@@ -75,8 +70,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return y;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }

@@ -17,8 +17,7 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
             return y;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }
@@ -27,8 +26,7 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
             return conn.executeQuery(query);
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }
@@ -37,8 +35,7 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
             return conn.executeQuery("SELECT * FROM Tirocinio");
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }

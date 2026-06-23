@@ -13,8 +13,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return conn.executeQuery(query);
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }
@@ -24,8 +23,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return true;
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return false;
     }
@@ -36,8 +34,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return true;
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return false;
@@ -48,8 +45,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return true;
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return false;
@@ -60,8 +56,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return true;
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return false;
@@ -77,8 +72,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return y;
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }
@@ -93,8 +87,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return y;
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return null;
@@ -111,8 +104,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return y;
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return null;
@@ -129,8 +121,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return y;
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return null;
@@ -146,8 +137,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return y;
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return null;
@@ -158,8 +148,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return true;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return false;
@@ -170,8 +159,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return true;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return false;
@@ -193,8 +181,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return true;
         }
         catch(SQLException e) {
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return false;
@@ -204,8 +191,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return conn.executeQuery("SELECT * FROM Tesi WHERE ID_Ri=ANY(SELECT ID_Ri from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'))");
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         return null;
     }
@@ -214,8 +200,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return conn.executeQuery("SELECT * from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"')");
        }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return null;
@@ -225,8 +210,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
             return conn.executeQuery("SELECT * FROM Studente");
         }
         catch(SQLException e){
-            System.out.println("Errore nell'esecuzione della query\n");
-            e.printStackTrace();
+            SQLExceptionHandler.handleSQLException(e);
         }
         
         return null;
