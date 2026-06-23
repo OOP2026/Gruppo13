@@ -170,8 +170,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
                return true;
             }
            catch(SQLException e){
-                System.out.println("Errore nell'esecuzione della query\n");
-                e.printStackTrace();
+                SQLExceptionHandler.handleSQLException(e);
            }
             return false;
     }
