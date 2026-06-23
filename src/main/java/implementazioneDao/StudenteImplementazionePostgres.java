@@ -7,16 +7,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
-public class StudenteImplementazionePostgres implements StudenteDAO {
-    public ResultSet queryViaUtente(String query, ConnessioneDatabase conn) {
-        try{
-            return conn.executeQuery(query);
-        }
-        catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
-        }
-        return null;
-    }
+public class StudenteImplementazionePostgres extends StudenteDAO {
     public Boolean setPassword(String username, String password,ConnessioneDatabase conn) {
         try{
             conn.executeQuery("UPDATE Studente set Password = '"+password+"' WHERE Docente.Login = '"+username+"'").close();

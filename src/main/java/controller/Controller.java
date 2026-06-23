@@ -116,7 +116,6 @@ public class Controller {
 		}
 		catch(NullPointerException e){
 			System.out.println("Richiesta non inserita, controlla studente e/o tirocinio");
-			e.printStackTrace();
 			return false;
 		}
 	}
@@ -231,7 +230,6 @@ public class Controller {
 		}
 		catch(NullPointerException e){
 			System.out.println("Tesi non inserita correttamente, ricontrolla la richiesta!");
-			e.printStackTrace();
 			return false;
 		}
 	}
@@ -248,7 +246,6 @@ public class Controller {
 		}
 		catch(NullPointerException e){
 			System.out.println("Seduta non inserita correttamente,ricontrolla la data!");
-			e.printStackTrace();
 			return false;
 		}
 	}

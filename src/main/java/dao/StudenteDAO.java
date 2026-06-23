@@ -5,7 +5,7 @@ import database_connection.ConnessioneDatabase;
 import java.sql.*;
 import java.time.LocalDate;
 
-public interface StudenteDAO extends UtenteDAO{
+public abstract class StudenteDAO extends UtenteDAO{
     public String getMatricola(String username, ConnessioneDatabase conn) ;
     public Boolean aggiungiTesi(String matricola,String contenuto,String nometirocinio, LocalDate datatirocinio, String docente,ConnessioneDatabase conn) ;
     public Boolean aggiungiRichiesta(String matricola, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn);

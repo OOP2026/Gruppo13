@@ -6,7 +6,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class DocenteImplementazionePostgres implements DocenteDAO {
+public class DocenteImplementazionePostgres extends DocenteDAO {
     public Boolean accettaRichiesta(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn){
         try{
             conn.executeQuery("UPDATE Richiesta SET Richiesta.Stato = 'V' WHERE Richiesta.Login = "+studente+" AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ="+nometirocinio+" AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = "+docente+")").close();
@@ -70,20 +70,18 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         }
         return false;
     }
-    @Nullable
+
     public Boolean isCoordinatore(String docente,ConnessioneDatabase conn) {
+        Boolean result = null;
         try{
-            Boolean y=null;
             ResultSet x=conn.executeQuery("SELECT Coordinatore FROM Docente WHERE Docente.Login = '"+docente+"'");
             if(x.next()){
-                y=x.getBoolean("Coordinatore");
+                result=x.getBoolean("Coordinatore");
             }
-            return y;
         } catch(SQLException e){
             SQLExceptionHandler.handleSQLException(e);
         }
-        return null;
-
+        return result;
     }
     public Boolean setCoordinatore(boolean x,String docente, boolean coordinatore,ConnessioneDatabase conn) {
         try {
@@ -123,18 +121,7 @@ public class DocenteImplementazionePostgres implements DocenteDAO {
         }
         return null;
     }
-    public ResultSet queryViaUtente(String query,ConnessioneDatabase conn) {
-        try{
-            return conn.executeQuery(query);
-        }
-        catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
-        }
-        
-            
-        
-        return null;
-    }
+
     public Boolean setPassword(String username, String password,ConnessioneDatabase conn) {
 
         try{
