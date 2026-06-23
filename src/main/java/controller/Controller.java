@@ -1,5 +1,4 @@
 package controller;
-import com.sun.jdi.InconsistentDebugInfoException;
 import database_connection.ConnessioneDatabase;
 import implementazioneDao.*;
 import model.*;
