@@ -66,7 +66,6 @@ public class Controller {
 			}
 			catch(NullPointerException e){
 				System.out.println("Problema nell'esecuzione\n");
-				e.printStackTrace();
 			}
 			catch (SQLException e) {
 				handleSQLException(e);
