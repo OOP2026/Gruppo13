@@ -5,7 +5,7 @@ import database_connection.ConnessioneDatabase;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-
+import static implementazioneDao.ExceptionHandler.*;
 public class TesiImplementazionePostgres implements TesiDAO {
     public char getStato(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) {
         try{
@@ -17,7 +17,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return y;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return '\0';
     }
@@ -27,7 +27,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return true;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
@@ -36,7 +36,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return conn.executeQuery(query);
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -45,7 +45,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return conn.executeQuery("SELECT * FROM Tesi");
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -55,7 +55,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return true;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
@@ -70,7 +70,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
             return y;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }

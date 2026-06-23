@@ -5,6 +5,7 @@ import database_connection.ConnessioneDatabase;
 
 import java.sql.*;
 import java.time.LocalDate;
+import static implementazioneDao.ExceptionHandler.*;
 
 public class RichiestaImplementazionePostgres implements RichiestaDAO {
     public char getStato(LocalDate data, String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) {
@@ -16,7 +17,7 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
             return s;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
 
         return '\0';
@@ -27,7 +28,7 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
             return true;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
 
         return false;
@@ -37,7 +38,7 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
             return conn.executeQuery(query);
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
 
         return null;
@@ -47,7 +48,7 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
             return conn.executeQuery("SELECT * FROM Richiesta");
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }

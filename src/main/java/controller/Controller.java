@@ -1,12 +1,14 @@
 package controller;
-import database_connection.ConnessioneDatabase;
 import implementazioneDao.*;
 import model.*;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
-import static implementazioneDao.SQLExceptionHandler.*;
+
+import static database_connection.ConnessioneDatabase.getInstance;
+import static implementazioneDao.ExceptionHandler.*;
 
 public class Controller {
 	ArrayList<Docente> docenti = new ArrayList<>();
@@ -41,9 +43,9 @@ public class Controller {
 		}
 		if (log==null)
 			try {
-				if(isDocente&&!docenteDao.login(email,password, ConnessioneDatabase.getInstance()))
+				if(isDocente&&!docenteDao.login(email,password, getInstance()))
 					throw new InconsistencyException("Docente trovato in locale e non in db");
-				else if(!isDocente&&!studenteDao.login(email,password, ConnessioneDatabase.getInstance()))
+				else if(!isDocente&&!studenteDao.login(email,password, getInstance()))
 					throw new InconsistencyException("Studente trovato in locale e non in db");
 			}
 			catch (SQLException e) {
@@ -56,9 +58,9 @@ public class Controller {
 				boolean x;
 				u.logOut();
 				if(isDocente)
-					x=docenteDao.logout(u.getLogin(), ConnessioneDatabase.getInstance());
+					x=docenteDao.logout(u.getLogin(), getInstance());
 				else
-					x=studenteDao.logout(u.getLogin(), ConnessioneDatabase.getInstance());
+					x=studenteDao.logout(u.getLogin(), getInstance());
 				if(!x)
 					throw new InconsistencyException("Docente logout in locale ma non in db");
 			}
@@ -90,32 +92,45 @@ public class Controller {
 
 	public boolean nuovoTirocinioEsterno(Docente docente,String nome, String descrizione,LocalDate data,String nomeAzienda,String referente){
 		Tirocinio x=docente.aggiungiTirocinio(nome,descrizione,data,nomeAzienda,referente);
-		//integrità con DB
-		//se DB Approva Modifica
-		tirocini.add(x);
+		try {
+			if (docenteDao.aggiungiTirocinio(docente.getLogin(),nome, descrizione, data,nomeAzienda,referente, getInstance()))
+				tirocini.add(x);
+		}
+		catch (SQLException e){
+			handleSQLException(e);
+		}
 		return true;
 	}
 
 	public boolean nuovoTirocinioInterno(Docente docente,String nome, String descrizione,LocalDate data) {
 		Tirocinio t=docente.aggiungiTirocinio(nome,descrizione,data);
-		//integrità con DB
-		//se DB Approva Modifica
-		tirocini.add(t);
+		try {
+			if(docenteDao.aggiungiTirocinio(docente.getLogin(),nome,descrizione,data, getInstance()))
+				tirocini.add(t);
+		} catch (SQLException e) {
+			handleSQLException(e);
+		} catch (NullPointerException ex){
+			handleNullPointerException(ex);
+		}
 		return true;
 	}
 
-	public boolean faiRichiesta(Studente studente,Tirocinio tirocinio) throws NullPointerException{
-		try{
-			Richiesta r=studente.faiRichiesta(LocalDate.now(ZoneId.systemDefault()),tirocinio);
-			//integrità con DB
-			//se DB Approva Modifica
-			richieste.add(r);
-			return true;
+	public boolean faiRichiesta(Studente studente,Tirocinio tirocinio){
+		try {
+			Richiesta r = studente.faiRichiesta(LocalDate.now(ZoneId.systemDefault()), tirocinio);
+			if (studenteDao.aggiungiRichiesta(studente.getMatricola(), tirocinio.getNome(), tirocinio.getData(), tirocinio.getRelatore().getLogin(), getInstance())){
+				richieste.add(r);
+				return true;
+			}
 		}
-		catch(NullPointerException e){
-			System.out.println("Richiesta non inserita, controlla studente e/o tirocinio");
-			return false;
+		catch(SQLException e){
+			handleSQLException(e);
 		}
+		catch (NullPointerException ex){
+			handleNullPointerException(ex);
+		    System.out.println("Richiesta non inserita, controlla studente e/o tirocinio");
+		}
+		return false;
 	}
 
 	public List<Richiesta> getRichiesta(Utente user,boolean isDocente){
@@ -128,14 +143,20 @@ public class Controller {
 	}
 
 	public boolean modificaStatoRichiesta(Docente docente,Richiesta richiesta,boolean ok){
-			if(ok){
-				//Integrità con DB
-				return docente.accettaRichiesta(richiesta);
+			try {
+				if (ok) {
+					if (docenteDao.accettaRichiesta(richiesta.getStudente().getLogin(), richiesta.getTirocinio().getNome(), richiesta.getTirocinio().getData(), docente.getLogin(), getInstance()))
+						return docente.accettaRichiesta(richiesta);
+					else return false;
+				} else {
+					if (docenteDao.rifiutaRichiesta(richiesta.getStudente().getLogin(), richiesta.getTirocinio().getNome(), richiesta.getTirocinio().getData(), docente.getLogin(), getInstance()))
+						return docente.rifiutaRichiesta(richiesta);
+				}
 			}
-			else {
-				//Integrità con DB
-				return docente.rifiutaRichiesta(richiesta);
+			catch(SQLException e){
+				handleSQLException(e);
 			}
+			return false;
 	}
 	//MAY BE NULL
 
@@ -144,14 +165,21 @@ public class Controller {
 	}
 
 	public boolean modificaStatoTesi(Docente docente,Tesi t,boolean ok){
-		if(ok){
-			//Integrità con DB
-			return docente.accettaTesi(t);
+		try{
+			if(ok){
+				if (docenteDao.accettaTesi(t.getRichiesta().getStudente().getLogin(),t.getRichiesta().getTirocinio().getNome(),t.getRichiesta().getTirocinio().getData(),t.getRichiesta().getTirocinio().getRelatore().getLogin(), getInstance()))
+					return docente.accettaTesi(t);
+			}
+			else {
+				if(docenteDao.rifiutaRichiesta(t.getRichiesta().getStudente().getLogin(),t.getRichiesta().getTirocinio().getNome(),t.getRichiesta().getTirocinio().getData(),t.getRichiesta().getTirocinio().getRelatore().getLogin(), getInstance()))
+					return docente.rifiutaTesi(t);
+			}
+		} catch(SQLException e){
+			handleSQLException(e);
+		} catch(NullPointerException ex){
+			handleNullPointerException(ex);
 		}
-		else {
-			//Integrità con DB
-			return docente.rifiutaTesi(t);
-		}
+		return false;
 	}
 	//MAY BE NULL
 	public String getStatoTesi(Utente u,Tesi t){
@@ -159,51 +187,132 @@ public class Controller {
 	}
 
 	public boolean eliminaTirocinio(Docente docente,Tirocinio tirocinio){
-		if(tirocinio.getRelatore().equals(docente)&&tirocini.contains(tirocinio)){
-			tirocini.remove(tirocinio);
-			return true;
+		try{
+			if(tirocinio.getRelatore().equals(docente)&&tirocini.contains(tirocinio)&&getInstance().executeUpdate("DELETE FROM Tirocinio WHERE Nome ='"+tirocinio.getNome()+"' AND Data = '"+tirocinio.getData()+"' AND Login = '"+docente.getLogin()+"';")>=1){
+					tirocini.remove(tirocinio);
+					return true;
+			}
+		} catch (SQLException e) {
+            handleSQLException(e);
+        } catch (NullPointerException ex){
+			handleNullPointerException(ex);
 		}
-		return false;
+        return false;
 	}
 	//MAY BE NULL
-	public Tirocinio cercaTirocinio (String nome){
+	public Tirocinio cercaTirocinio (String nome,LocalDate data)throws InconsistencyException{
+		Tirocinio tirocinio = null;
 		for(Tirocinio x:tirocini){
-			if(x.getNome().equals(nome)){
-				return x;
-			}
+			if(x.getNome().equals(nome) && x.getData().equals(data))
+				tirocinio = x;
 		}
-		return null;
+		try{
+			ResultSet x=tirocinioDao.queryViaTirocinio("SELECT TOP 1 FROM Tirocinio Where Nome='"+nome+"' AND Data='"+data+"';",getInstance());
+			if(x.next()) {
+				if (tirocinio != null)
+					return tirocinio;
+				else
+					throw new InconsistencyException("Tirocinio presente nel db e non in locale");
+			}
+			else
+				throw new InconsistencyException("Tirocinio presente in locale e non nel db");
+		}
+		catch(SQLException e){
+			handleSQLException(e);
+		}
+		return tirocinio;
 	}
 	//MAY BE NULL
-	public Docente cercaDocente (String nome, String cognome){
+	public Docente cercaDocente (String login)throws InconsistencyException{
+		Docente docente = null;
 		for(Docente x:docenti){
-			if(x.getNome().equals(nome)&&x.getCognome().equals(cognome)){
-				return x;
+			if(x.getLogin().equals(login)){
+				docente=x;
 			}
 		}
-		return null;
+		try{
+			ResultSet x=docenteDao.queryViaUtente("SELECT TOP 1 FROM Docente WHERE login = '"+login+"';",getInstance());
+			if(x.next()) {
+				if (docente != null)
+					return docente;
+				else
+					throw new InconsistencyException("Docente presente nel db e non in locale");
+			}
+			else if (docente!=null)
+				throw new InconsistencyException("Docente presente in locale e non nel db");
+		}
+		catch (SQLException e){
+			handleSQLException(e);
+		}
+		return docente;
 	}
 	//MAY BE NULL
-	public Richiesta cercaRichiesta (Studente studente,Tirocinio tirocinio){
+	public Richiesta cercaRichiesta (Studente studente,Tirocinio tirocinio) throws InconsistencyException{
+		Richiesta richiesta = null;
 		for (Richiesta x : richieste) {
 			if(x.getStudente().equals(studente)&&x.getTirocinio().equals(tirocinio))
-				return x;
+				richiesta= x;
+
+		}
+		try{
+			ResultSet x =richiestaDao.queryViaRichiesta("SELECT TOP 1 FROM Richiesta WHERE Login='"+studente.getLogin()+"' AND ID_Ti =(SELECT ID_Ti FROM Tirocinio WHERE Nome = '"+tirocinio.getNome()+"' AND Data = '"+tirocinio.getData()+"' AND Login = '"+tirocinio.getRelatore().getLogin()+"');",getInstance());
+			if(x.next()){
+				if(richiesta!=null)
+					return richiesta;
+				else
+					throw new InconsistencyException("Richiesta presente nel db ma non in locale");
+			}
+			else if(richiesta!=null)
+				throw new InconsistencyException("Richiesta presente in locale e non nel db");
+		}
+		catch(SQLException e){
+			handleSQLException(e);
 		}
 		return null;
 	}
 	//MAY BE NULL
-	public Tesi cercaTesi (Richiesta richiesta){
+	public Tesi cercaTesi (Richiesta richiesta) throws InconsistencyException{
+		Tesi t = null;
 		for(Tesi x:tesi){
 			if(x.getRichiesta().equals(richiesta))
-				return x;
+				t= x;
+		}
+		try{
+			ResultSet x=tesiDao.queryViaTesi("SELECT TOP 1 FROM Tesi WHERE ID_Ri=(SELECT ID_Ri FROM Richiesta WHERE Login='"+richiesta.getStudente().getLogin()+"' AND ID_Ti = (Select ID_Ti FROM Tirocinio WHERE Nome = '"+richiesta.getTirocinio().getNome()+"' AND Data = '"+richiesta.getTirocinio().getData()+"' AND Login = '"+richiesta.getTirocinio().getRelatore().getLogin()+"'));",getInstance());
+			if(x.next()){
+				if (t!=null)
+					return t;
+				else
+					throw new InconsistencyException("Richiesta presente nel db e non in locale");
+			}
+			else if (t!=null)
+				throw new InconsistencyException("Richiesta presente in locale e non nel db");
+		}
+		catch(SQLException e){
+			handleSQLException(e);
 		}
 		return null;
 	}
 	//MAY BE NULL
-	public Seduta cercaSeduta(Tesi tesi){
+	public Seduta cercaSeduta(Tesi tesi) throws InconsistencyException{
+		Seduta seduta=null;
 		for(Seduta x:sedute){
 			if(x.getTesi().equals(tesi))
-				return x;
+				seduta = x;
+		}
+		try{
+			ResultSet x=sedutaDao.queryViaSeduta("SELECT TOP 1 FROM Seduta WHERE ID_Te=(SELECT ID_Te FROM Tesi WHERE ID_Ri=(SELECT ID_Ri FROM Richiesta WHERE Login='"+tesi.getRichiesta().getStudente().getLogin()+"' AND ID_Ti = (Select ID_Ti FROM Tirocinio WHERE Nome = '"+tesi.getRichiesta().getTirocinio().getNome()+"' AND Data = '"+tesi.getRichiesta().getTirocinio().getData()+"' AND Login = '"+tesi.getRichiesta().getTirocinio().getRelatore().getLogin()+"')));",getInstance());
+			if(x.next()){
+				if (seduta!=null)
+					return seduta;
+				else
+					throw new InconsistencyException("Seduta presente nel db e non in locale");
+			}
+			else if (seduta!=null)
+				throw new InconsistencyException("Seduta presente in locale e non nel db");
+		}
+		catch(SQLException e){
+			handleSQLException(e);
 		}
 		return null;
 	}
@@ -213,23 +322,34 @@ public class Controller {
 	}
 
 	public boolean modificaTesi(Studente studente,Tesi tesi,String contenuto){
-		return studente.aggiornaTesi(tesi,contenuto);
+		try {
+			if (studenteDao.aggiornaTesi(studente.getMatricola(), contenuto, tesi.getRichiesta().getTirocinio().getNome(), tesi.getRichiesta().getTirocinio().getData(), tesi.getRichiesta().getTirocinio().getRelatore().getLogin(),getInstance()))
+				return studente.aggiornaTesi(tesi, contenuto);
+		}
+		catch (SQLException e){
+			handleSQLException(e);
+		}
+		return false;
 	}
 
 	public boolean aggiungiTesi(Studente studente,Richiesta r, String contenuto) throws NullPointerException{
 		try {
 			if (r.getStudente().equals(studente)){
 				Tesi x=studente.aggiungiTesi(r,contenuto);
-				//Integrità con il db
-				tesi.add(x);
-				return true;
+				if(studenteDao.aggiungiTesi(studente.getMatricola(),contenuto,r.getTirocinio().getNome(),r.getTirocinio().getData(),r.getTirocinio().getRelatore().getLogin(),getInstance())) {
+					tesi.add(x);
+					return true;
+				}
 			}
 			return false;
 		}
-		catch(NullPointerException e){
-			System.out.println("Tesi non inserita correttamente, ricontrolla la richiesta!");
-			return false;
+		catch(SQLException e){
+			handleSQLException(e);
 		}
+		catch(NullPointerException e){
+			handleNullPointerException(e);
+		}
+		return false;
 	}
 
 	//MAY BE NULL
@@ -237,15 +357,20 @@ public class Controller {
 		return user.visualizzaTesi(tesi);
 	}
 
-	public boolean aggiungiSedutaDiLaurea(Docente d,LocalDate data,LocalTime ora) throws NullPointerException{
+	public boolean aggiungiSeduta(Docente d,LocalDate data,LocalTime ora) throws NullPointerException{
 		try{
-			sedute.add(d.aggiungiSedutaDiLaurea(data,ora));
-			return true;
+			if(docenteDao.aggiungiSedutaDiLaurea(data,ora,d.getLogin(),getInstance())) {
+				sedute.add(d.aggiungiSedutaDiLaurea(data,ora));
+				return true;
+			}
+		}
+		catch (SQLException e){
+			handleSQLException(e);
 		}
 		catch(NullPointerException e){
-			System.out.println("Seduta non inserita correttamente,ricontrolla la data!");
-			return false;
+			handleNullPointerException(e);
 		}
+		return false;
 	}
 
 	//MAY BE NULL
@@ -272,18 +397,48 @@ public class Controller {
 	}
 
 	//may be null
-	public Seduta cercaSedutaDiLaurea(Docente d,LocalDate data){
+	public Seduta cercaSeduta(Docente d,LocalDate data,LocalTime ora) throws InconsistencyException{
+		Seduta seduta=null;
 		for (Seduta x : sedute) {
 			if(x.getDocente().equals(d) && x.getData().equals(data))
-				return x;
+				seduta = x;
 			}
+
+		try{
+			ResultSet x =sedutaDao.queryViaSeduta("SELECT TOP 1 FROM Seduta WHERE Login='"+d.getLogin()+"' AND Data = '"+data+"' AND Ora = '"+ora+"');",getInstance());
+			if(x.next()){
+				if(seduta!=null)
+					return seduta;
+				else
+					throw new InconsistencyException("Seduta presente nel db ma non in locale");
+			}
+			else if(seduta!=null)
+				throw new InconsistencyException("Seduta presente in locale e non nel db");
+		}
+		catch(SQLException e){
+			handleSQLException(e);
+		}
 		return null;
 	}
 	public Boolean prenotaSedutaDiLaurea(Studente st,Seduta se,Tesi t){
-		return st.prenotaSedutadiLaurea(se,t);
+		try{
+			if(studenteDao.prenotaSedutaDiLaurea(st.getMatricola(),se.getData(),t.getRichiesta().getTirocinio().getNome(),t.getRichiesta().getTirocinio().getData(),t.getRichiesta().getTirocinio().getRelatore().getLogin(),getInstance()))
+				return st.prenotaSedutadiLaurea(se,t);
+		}
+		catch(SQLException e){
+			handleSQLException(e);
+		}
+		return false;
 	}
 	public Boolean inserisciVotoSedutaDiLaurea(Docente d,Seduta s,int voto){
-		return d.aggiungiVotoSedutaDiLaurea(s,voto);
+		try{
+			if(docenteDao.aggiungiVotoSedutaDiLaurea(voto,s.getData(),s.getOra(),s.getDocente().getLogin(),getInstance()))
+				return d.aggiungiVotoSedutaDiLaurea(s,voto);
+		}
+		catch (SQLException e){
+			handleSQLException(e);
+		}
+		return false;
 	}
 }
 /*

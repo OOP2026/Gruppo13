@@ -24,7 +24,19 @@ public class ConnessioneDatabase {
         try {
             return statement.executeQuery();
         } catch (SQLException e) {
-            System.out.println("Errore nell'esecuzione della query: " + e.getMessage());
+            throw e;
+        }
+        finally {
+            statement.close();
+            conn.close();
+        }
+    }
+    public int executeUpdate(String query) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement(query);
+        try {
+            return statement.executeUpdate();
+        }
+        catch (SQLException e) {
             throw e;
         }
         finally {

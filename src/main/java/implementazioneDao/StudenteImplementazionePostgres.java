@@ -6,6 +6,7 @@ import database_connection.ConnessioneDatabase;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import static implementazioneDao.ExceptionHandler.*;
 
 public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgres implements StudenteDAO{
     public Boolean setPassword(String username, String password, ConnessioneDatabase conn) {
@@ -14,7 +15,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return true;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
@@ -25,7 +26,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return true;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return false;
@@ -36,7 +37,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return true;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return false;
@@ -47,7 +48,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return true;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return false;
@@ -63,7 +64,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return y;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -78,7 +79,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return y;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return null;
@@ -95,7 +96,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return y;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return null;
@@ -112,7 +113,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return y;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return null;
@@ -128,7 +129,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return y;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return null;
@@ -139,7 +140,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return true;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return false;
@@ -150,7 +151,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return true;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return false;
@@ -161,17 +162,17 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
                return true;
             }
            catch(SQLException e){
-                SQLExceptionHandler.handleSQLException(e);
+                handleSQLException(e);
            }
             return false;
     }
     public Boolean prenotaSedutaDiLaurea(String matricola, LocalDate data, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) {
         try{
-            conn.executeQuery("UPDATE Seduta SET ID_Te=(SELECT ID_Te FROM Tesi WHERE ID_Ri = (SELECT ID_RI FROM Richiesta WHERE Login='"+matricola+"' AND ID_Ti=(SELECT ID_Ti FROM Tirocinio WHERE Nome='"+nometirocinio+"' AND Data='"+datatirocinio.toString()+"' AND Login='"+docente+"'))) WHERE Login='"+docente+"' AND Data='"+data.toString()+"'").close();
+            conn.executeQuery("UPDATE Seduta SET ID_Te=(SELECT ID_Te FROM Tesi WHERE ID_Ri = (SELECT ID_RI FROM Richiesta WHERE Login='"+matricola+"' AND ID_Ti=(SELECT ID_Ti FROM Tirocinio WHERE Nome='"+nometirocinio+"' AND Data='"+datatirocinio.toString()+"' AND Login='"+docente+"'))) WHERE Login='"+docente+"' AND Data='"+data+"'").close();
             return true;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return false;
@@ -181,7 +182,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return conn.executeQuery("SELECT * FROM Tesi WHERE ID_Ri=ANY(SELECT ID_Ri from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'))");
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -190,7 +191,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return conn.executeQuery("SELECT * from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"')");
        }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return null;
@@ -200,7 +201,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
             return conn.executeQuery("SELECT * FROM Studente");
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return null;

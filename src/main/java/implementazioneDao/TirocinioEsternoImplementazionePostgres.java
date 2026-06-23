@@ -5,7 +5,7 @@ import database_connection.ConnessioneDatabase;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-
+import static implementazioneDao.ExceptionHandler.*;
 public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementazionePostgres implements TirocinioEsternoDAO {
     public String getNomeAzienda(String docente,String nome, LocalDate data, ConnessioneDatabase conn){
         try{
@@ -17,7 +17,7 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
             return y;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return null;
@@ -32,7 +32,7 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
             return y;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -41,7 +41,7 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
             return conn.executeQuery(query);
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -50,7 +50,7 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
             return conn.executeQuery("SELECT * FROM Tirocinio NATURAL JOIN TirocinioEsterno");
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }

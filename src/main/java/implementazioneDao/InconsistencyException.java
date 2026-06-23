@@ -1,4 +1,4 @@
-package controller;
+package implementazioneDao;
 
 public class InconsistencyException extends Exception{
     public InconsistencyException(String s){

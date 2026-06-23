@@ -5,14 +5,26 @@ import database_connection.ConnessioneDatabase;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import static implementazioneDao.ExceptionHandler.*;
 
 public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgres implements DocenteDAO {
+    @Override
+    public Boolean aggiungiTirocinio(String docente, String nome, String descrizione, LocalDate data, String nomeAzienda, String referente, ConnessioneDatabase conn){
+        try{
+            conn.executeQuery("INSERT INTO Tirocinio(Nome,Descrizione,Data,Login) VALUES ('"+nome+"','"+descrizione+"','"+data+"','"+docente+"');").close();
+            conn.executeQuery("INSERT INTO TirocinioEsterno(NomeAzienda,Referente,ID_Ti) VALUES ('"+nomeAzienda+"','"+referente+"',SELECT TOP 1 ID_Ti FROM Tirocinio WHERE Nome = '"+nome+"' AND  Descrizione = '"+descrizione+"' AND Data = '"+data+"' AND Login = '"+docente+"');");
+            return true;
+        } catch(SQLException e){
+            handleSQLException(e);
+        }
+        return false;
+    }
     public Boolean accettaRichiesta(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn){
         try{
             conn.executeQuery("UPDATE Richiesta SET Richiesta.Stato = 'V' WHERE Richiesta.Login = "+studente+" AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ="+nometirocinio+" AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = "+docente+")").close();
             return true;
         } catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
@@ -21,7 +33,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             conn.executeQuery("UPDATE Richiesta SET Richiesta.Stato = 'X' WHERE Richiesta.Login = "+studente+" AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ="+nometirocinio+" AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = "+docente+")").close();
             return true;
         } catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
@@ -30,7 +42,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             conn.executeQuery("UPDATE Tesi SET Tesi.Stato = 'X' WHERE ID_Ri=(Select ID_Ri from Richiesta WHERE Richiesta.Login = '"+studente+"' AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"'))").close();
             return true;
         } catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
@@ -39,34 +51,34 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             conn.executeQuery("UPDATE Tesi SET Tesi.Stato = 'V' WHERE ID_Ri=(Select ID_Ri from Richiesta WHERE Richiesta.Login = '"+studente+"' AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"'))").close();
             return true;
         } catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
     public Boolean aggiungiSedutaDiLaurea(LocalDate data, LocalTime ora, String docente, ConnessioneDatabase conn) {
         try{
-            conn.executeQuery("INSERT INTO Seduta() VALUES ('"+data+"','"+docente+"')").close();
+            conn.executeQuery("INSERT INTO Seduta(Data,Ora,Login) VALUES ('"+data+"','"+ora+"''"+docente+"')").close();
             return true;
         } catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
     public Boolean aggiungiVotoSedutaDiLaurea(int voto, LocalDate data, LocalTime ora, String docente, ConnessioneDatabase conn) {
         try{
-            conn.executeQuery("UPDATE Seduta SET VotoFinale = '"+voto+"' WHERE Seduta.Data = '"+data.toString()+"' AND Seduta.Ora ='"+ora.toString()+"' AND Seduta.Login = '"+docente+"'").close();
+            conn.executeQuery("UPDATE Seduta SET VotoFinale = '"+voto+"' WHERE Seduta.Data = '"+data+"' AND Seduta.Ora ='"+ora.toString()+"' AND Seduta.Login = '"+docente+"'").close();
             return true;
         } catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
-    public Boolean aggiungiTirocinio(String nome, String descrizione, LocalDate data, String docente, ConnessioneDatabase conn) {
+    public Boolean aggiungiTirocinio(String docente,String nome, String descrizione, LocalDate data, ConnessioneDatabase conn) {
         try{
-            conn.executeQuery("INSERT INTO Tirocinio(Nome,Descrizione,Data,Login) VALUES ('"+nome+"','"+descrizione+"','"+data.toString()+"','"+docente+"')").close();
+            conn.executeQuery("INSERT INTO Tirocinio(Nome,Descrizione,Data,Login) VALUES ('"+nome+"','"+descrizione+"','"+data+"','"+docente+"')").close();
             return true;
         } catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
@@ -79,7 +91,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
                 result=x.getBoolean("Coordinatore");
             }
         } catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return result;
     }
@@ -92,7 +104,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             return true;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
@@ -100,7 +112,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
         try{
             return conn.executeQuery("SELECT * FROM Tirocinio WHERE Tirocinio.Login = '"+docente+"'");
         } catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -108,7 +120,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
         try{
             return conn.executeQuery("SELECT * FROM Seduta WHERE Seduta.Login = '"+docente+"'");
         } catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -117,7 +129,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             return conn.executeQuery("SELECT * FROM Docente");
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -129,7 +141,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             return true;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
 
         return false;
@@ -140,7 +152,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             return true;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
@@ -150,7 +162,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             return true;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
@@ -161,7 +173,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             return true;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return false;
     }
@@ -176,7 +188,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             return s;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         
         return null;
@@ -193,7 +205,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             return s;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -208,7 +220,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             return s;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -223,7 +235,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
             return s;
         }
         catch(SQLException e){
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }

@@ -5,7 +5,7 @@ import database_connection.ConnessioneDatabase;
 
 import java.sql.*;
 import java.time.LocalDate;
-
+import static implementazioneDao.ExceptionHandler.*;
 public class TirocinioImplementazionePostgres implements TirocinioDAO {
     public String getDescrizione(String docente, String nome, LocalDate data, ConnessioneDatabase conn){
         try{
@@ -17,7 +17,7 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
             return y;
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -26,7 +26,7 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
             return conn.executeQuery(query);
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }
@@ -35,7 +35,7 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
             return conn.executeQuery("SELECT * FROM Tirocinio");
         }
         catch(SQLException e) {
-            SQLExceptionHandler.handleSQLException(e);
+            handleSQLException(e);
         }
         return null;
     }

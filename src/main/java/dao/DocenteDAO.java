@@ -6,13 +6,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public interface DocenteDAO extends UtenteDAO{
+    public Boolean aggiungiTirocinio(String docente, String nome,String descrizione,LocalDate data,String nomeAzienda,String referente,ConnessioneDatabase conn);
     public Boolean accettaRichiesta(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn);
     public Boolean rifiutaRichiesta(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn);
     public Boolean rifiutaTesi(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) ;
     public Boolean accettaTesi(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) ;
     public Boolean aggiungiSedutaDiLaurea(LocalDate data, LocalTime ora, String docente, ConnessioneDatabase conn) ;
     public Boolean aggiungiVotoSedutaDiLaurea(int voto, LocalDate data, LocalTime ora, String docente, ConnessioneDatabase conn) ;
-    public Boolean aggiungiTirocinio(String nome, String descrizione, LocalDate data, String docente, ConnessioneDatabase conn) ;
+    public Boolean aggiungiTirocinio(String docente,String nome, String descrizione, LocalDate data,  ConnessioneDatabase conn) ;
     public Boolean isCoordinatore(String docente, ConnessioneDatabase conn) ;
     public Boolean setCoordinatore(boolean x, String docente, boolean coordinatore, ConnessioneDatabase conn) ;
     public ResultSet getAllTirocinio(String docente, ConnessioneDatabase conn) ;
