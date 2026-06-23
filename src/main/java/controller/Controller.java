@@ -1,5 +1,10 @@
 package controller;
+import database_connection.ConnessioneDatabase;
+import implementazioneDao.*;
 import model.*;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
 
@@ -10,8 +15,15 @@ public class Controller {
 	ArrayList<Richiesta> richieste = new ArrayList<>();
 	ArrayList<Seduta> sedute=new ArrayList<>();
 	ArrayList<Tesi> tesi=new ArrayList<>();
+	StudenteImplementazionePostgres StudenteDao = new StudenteImplementazionePostgres();
+	DocenteImplementazionePostgres DocenteDao = new DocenteImplementazionePostgres();
+	RichiestaImplementazionePostgres RichiestaDao = new RichiestaImplementazionePostgres();
+	TesiImplementazionePostgres  TesiDao = new TesiImplementazionePostgres();
+	TirocinioImplementazionePostgres TirocinioDao = new TirocinioImplementazionePostgres();
+	TirocinioEsternoImplementazionePostgres TirocinioEsternoDao = new TirocinioEsternoImplementazionePostgres();
+	SedutaImplementazionePostgres SedutaDao = new SedutaImplementazionePostgres();
 
-	public Controller() {
+	public Controller() throws SQLException {
 		//Integrità con il DB dei dati
 		//valori di test da eliminare
 	}
@@ -22,13 +34,22 @@ public class Controller {
 			for(Docente x:docenti){
 				log=x.logIn(email, password);
 			}
-			//Integra DB
+			try {
+				if(log==null && DocenteDao.login(email,password,ConnessioneDatabase.getInstance())){
+					System.out.println("Docente non trovato");
+				}
+			}
+			catch (Exception e) {
+				System.out.println("Problema nell'esecuzione\n"+e.getMessage());
+			}
 		}
 		else{
 			for (Studente x : studenti){
 				log=x.logIn(email, password);
 			}
-			//Integra DB
+			if(log==null){
+				System.out.println("Studente non trovato in locale, richiesta al db");
+			}
 		}
 		return log;
 	}

@@ -1,272 +1,233 @@
 package implementazioneDao;
 
 import dao.StudenteDAO;
+import database_connection.ConnessioneDatabase;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 
 public class StudenteImplementazionePostgres implements StudenteDAO {
-    public ResultSet queryViaUtente(String query,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement(query);
+    public ResultSet queryViaUtente(String query, ConnessioneDatabase conn) {
         try{
-            return stmt.executeQuery();
+            return conn.executeQuery(query);
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
-        return false;
+        return null;
     }
-    public boolean setPassword(String username, String password,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("UPDATE Studente set Password = '"+password+"' WHERE Docente.Login = '"+username+"'");
+    public Boolean setPassword(String username, String password,ConnessioneDatabase conn) {
         try{
-            stmt.executeQuery();
+            conn.executeQuery("UPDATE Studente set Password = '"+password+"' WHERE Docente.Login = '"+username+"'").close();
             return true;
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
         return false;
     }
-    public boolean setUsername(String oldusername, String newusername,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("UPDATE Studente set Login = '"+newusername+"' WHERE Studente.Login = '"+oldusername+"'");
+    public Boolean setUsername(String oldusername, String newusername,ConnessioneDatabase conn) {
+
         try{
-            stmt.executeQuery();
+            conn.executeQuery("UPDATE Studente set Login = '"+newusername+"' WHERE Studente.Login = '"+oldusername+"'").close();
             return true;
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return false;
     }
-    public boolean login(String username,String password,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("UPDATE Studente set Stato = TRUE WHERE Studente.Login = '"+username+"' AND Password = '"+password+"'");
+    public Boolean login(String username,String password,ConnessioneDatabase conn) {
         try{
-            stmt.executeQuery();
+            conn.executeQuery("UPDATE Studente set Stato = TRUE WHERE Studente.Login = '"+username+"' AND Password = '"+password+"'").close();
             return true;
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return false;
     }
-    public boolean logout(String username,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("UPDATE Studente set Stato = FALSE WHERE Studente.Login = '"+username+"'");
+    public Boolean logout(String username,ConnessioneDatabase conn) {
         try{
-            stmt.executeQuery();
+            conn.executeQuery("UPDATE Studente set Stato = FALSE WHERE Studente.Login = '"+username+"'").close();
             return true;
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return false;
     }
     //MAY BE NULL
-    public String getNome(String username,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("SELECT Nome FROM Studente WHERE Studente.Login = '"+username+"'");
+    public String getNome(String username,ConnessioneDatabase conn) {
         try{
-            ResultSet x=stmt.executeQuery();
+            String y=null;
+            ResultSet x = conn.executeQuery("SELECT Nome FROM Studente WHERE Studente.Login = '"+username+"'");
             if(x.next())
-                return x.getString("Nome");
+                y= x.getString("Nome");
+            x.close();
+            return y;
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-        }
-        finally {
-            stmt.close();
         }
         return null;
     }
     //MAY BE NULL
-    public String getCognome(String username,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("SELECT Cognome FROM Studente WHERE Studente.Login = '"+username+"'");
+    public String getCognome(String username,ConnessioneDatabase conn) {
         try{
-            ResultSet x=stmt.executeQuery();
+            String y=null;
+            ResultSet x=conn.executeQuery("SELECT Cognome FROM Studente WHERE Studente.Login = '"+username+"'");
             if(x.next())
-                return x.getString("Cognome");
+                y=x.getString("Cognome");
+            x.close();
+            return y;
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return null;
     }
     //MAY BE NULL
-    public String getEmail(String username,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("SELECT Email FROM Studente WHERE Studente.Login = '"+username+"'");
+    public String getEmail(String username,ConnessioneDatabase conn) {
+
         try{
-            ResultSet x=stmt.executeQuery();
+            String y=null;
+            ResultSet x=conn.executeQuery("SELECT Email FROM Studente WHERE Studente.Login = '"+username+"'");
             if(x.next())
-                return x.getString("Email");
+                y=x.getString("Email");
+            x.close();
+            return y;
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return null;
     }
     //MAY BE NULL
-    public String getPassword(String username,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("SELECT Password FROM Studente WHERE Studente.Login = '"+username+"'");
+    public String getPassword(String username,ConnessioneDatabase conn) {
+
         try{
-            ResultSet x=stmt.executeQuery();
+            String y=null;
+            ResultSet x=conn.executeQuery("SELECT Password FROM Studente WHERE Studente.Login = '"+username+"'");
             if(x.next())
-                return x.getString("Password");
+                y=x.getString("Password");
+            x.close();
+            return y;
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return null;
     }
-    public String getMatricola(String username,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("SELECT Matricola FROM Studente WHERE Studente.Login = '"+username+"'");
+    public String getMatricola(String username,ConnessioneDatabase conn) {
+
         try{
-            ResultSet x=stmt.executeQuery();
+            String y=null;
+            ResultSet x=conn.executeQuery("SELECT Matricola FROM Studente WHERE Studente.Login = '"+username+"'");
             if(x.next())
-                return x.getString("Password");
+                y=x.getString("Password");
+            x.close();
+            return y;
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return null;
     }
-    public boolean aggiungiTesi(String matricola, String contenuto, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("INSERT INTO Tesi(Contenuto,ID_Ri) VALUES ('"+contenuto+"', (SELECT ID_Ri FROM Richiesta R JOIN Tirocinio T ON T.ID_Ti=R.ID_Ti WHERE T.Nome='"+nometirocinio+"' AND T.Data='"+datatirocinio.toString()+"'AND T.Login = '"+docente+"')))");
+    public Boolean aggiungiTesi(String matricola, String contenuto, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) {
         try{
-            stmt.executeQuery();
+            conn.executeQuery("INSERT INTO Tesi(Contenuto,ID_Ri) VALUES ('"+contenuto+"', (SELECT ID_Ri FROM Richiesta R JOIN Tirocinio T ON T.ID_Ti=R.ID_Ti WHERE T.Nome='"+nometirocinio+"' AND T.Data='"+datatirocinio.toString()+"'AND T.Login = '"+docente+"')))").close();
             return true;
         }
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return false;
     }
-    public boolean aggiungiRichiesta(String matricola, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn)throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("INSERT INTO Richiesta(Login,Data,ID_Ti) VALUES ((SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'),'"+LocalDate.now().toString()+"',(SELECT ID_Ti FROM Tirocinio T WHERE T.Nome='"+nometirocinio+"' AND T.Data='"+datatirocinio.toString()+"' AND T.Login='"+docente+"'))");
+    public Boolean aggiungiRichiesta(String matricola, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn){
         try{
-            stmt.executeQuery();
+            conn.executeQuery("INSERT INTO Richiesta(Login,Data,ID_Ti) VALUES ((SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'),'"+LocalDate.now()+"',(SELECT ID_Ti FROM Tirocinio T WHERE T.Nome='"+nometirocinio+"' AND T.Data='"+datatirocinio.toString()+"' AND T.Login='"+docente+"'))").close();
             return true;
         }
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return false;
     }
-    public boolean aggiornaTesi(String matricola,String contenuto,String nometirocinio, LocalDate datatirocinio, String docente,Connection conn) throws SQLException{
-           PreparedStatement stmt = conn.prepareStatement("UPDATE Tesi SET Tesi.Contenuto = '"+contenuto+"' WHERE ID_Ri=(Select ID_Ri from Richiesta WHERE Richiesta.Login = (SELECT Login FROM Studente S WHERE S.Matricola='"+matricola+"') AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"'))");
+    public Boolean aggiornaTesi(String matricola,String contenuto,String nometirocinio, LocalDate datatirocinio, String docente,ConnessioneDatabase conn) {
            try{
-               stmt.executeQuery();
+               conn.executeQuery("UPDATE Tesi SET Tesi.Contenuto = '"+contenuto+"' WHERE ID_Ri=(Select ID_Ri from Richiesta WHERE Richiesta.Login = (SELECT Login FROM Studente S WHERE S.Matricola='"+matricola+"') AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"'))").close();
                return true;
             }
            catch(SQLException e){
                 System.out.println("Errore nell'esecuzione della query\n");
                 e.printStackTrace();
-            }
-           finally {
-               stmt.close();
            }
             return false;
     }
-    public boolean prenotaSedutaDiLaurea(String matricola, LocalDate data, String nometirocinio, LocalDate datatirocinio, String docente, Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("UPDATE Seduta SET ID_Te=(SELECT ID_Te FROM Tesi WHERE ID_Ri = (SELECT ID_RI FROM Richiesta WHERE Login='"+matricola+"' AND ID_Ti=(SELECT ID_Ti FROM Tirocinio WHERE Nome='"+nometirocinio+"' AND Data='"+datatirocinio.toString()+"' AND Login='"+docente+"'))) WHERE Login='"+docente+"' AND Data='"+data.toString()+"'");
+    public Boolean prenotaSedutaDiLaurea(String matricola, LocalDate data, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) {
         try{
-            stmt.executeQuery();
+            conn.executeQuery("UPDATE Seduta SET ID_Te=(SELECT ID_Te FROM Tesi WHERE ID_Ri = (SELECT ID_RI FROM Richiesta WHERE Login='"+matricola+"' AND ID_Ti=(SELECT ID_Ti FROM Tirocinio WHERE Nome='"+nometirocinio+"' AND Data='"+datatirocinio.toString()+"' AND Login='"+docente+"'))) WHERE Login='"+docente+"' AND Data='"+data.toString()+"'").close();
             return true;
         }
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return false;
     }
-    public ResultSet getAllTesi(String matricola,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Tesi WHERE ID_Ri=ANY(SELECT ID_Ri from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'))");
+    public ResultSet getAllTesi(String matricola,ConnessioneDatabase conn) {
         try{
-            return stmt.executeQuery();
+            return conn.executeQuery("SELECT * FROM Tesi WHERE ID_Ri=ANY(SELECT ID_Ri from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'))");
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-        }
-        finally {
-            stmt.close();
         }
         return null;
     }
-    public ResultSet getAllRichiesta(String matricola,Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("SELECT * from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"')");
-        try{
-            return stmt.executeQuery();
-        }
+    public ResultSet getAllRichiesta(String matricola,ConnessioneDatabase conn) {
+       try{
+            return conn.executeQuery("SELECT * from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"')");
+       }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return null;
     }
-    public ResultSet getAllStudente(Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Studente");
+    public ResultSet getAllStudente(ConnessioneDatabase conn) {
         try{
-            return stmt.executeQuery();
+            return conn.executeQuery("SELECT * FROM Studente");
         }
         catch(SQLException e){
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
         }
-        finally {
-            stmt.close();
-        }
+        
         return null;
     }
 }

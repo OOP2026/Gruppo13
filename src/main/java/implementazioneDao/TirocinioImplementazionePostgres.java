@@ -1,52 +1,44 @@
 package implementazioneDao;
 
 import dao.TirocinioDAO;
+import database_connection.ConnessioneDatabase;
 
 import java.sql.*;
 import java.time.LocalDate;
 
 public class TirocinioImplementazionePostgres implements TirocinioDAO {
-    public String getDescrizione(String docente, String nome, LocalDate data, Connection conn)throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("SELECT Descrizione FROM Tirocinio WHERE Nome='"+nome+"' AND Data='"+data+"' AND Docente='"+docente+"'");
+    public String getDescrizione(String docente, String nome, LocalDate data, ConnessioneDatabase conn)throws SQLException{
         try{
-            ResultSet x=stmt.executeQuery();
+            String y=null;
+            ResultSet x=conn.executeQuery("SELECT Descrizione FROM Tirocinio WHERE Nome='"+nome+"' AND Data='"+data+"' AND Docente='"+docente+"'");
             if (x.next())
-                return x.getString("Descrizione");
+                y=x.getString("Descrizione");
+            x.close();
+            return y;
         }
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-        }
-        finally {
-            stmt.close();
         }
         return null;
     }
-    public ResultSet queryViaTirocinio(String query, Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement(query);
+    public ResultSet queryViaTirocinio(String query, ConnessioneDatabase conn) throws SQLException{
         try{
-            return stmt.executeQuery();
+            return conn.executeQuery(query);
         }
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-        }
-        finally {
-            stmt.close();
         }
         return null;
     }
-    public ResultSet getAllTirocinio(Connection conn) throws SQLException{
-        PreparedStatement stmt=conn.prepareStatement("SELECT * FROM Tirocinio");
+    public ResultSet getAllTirocinio(ConnessioneDatabase conn) throws SQLException{
         try{
-            return stmt.executeQuery();
+            return conn.executeQuery("SELECT * FROM Tirocinio");
         }
         catch(SQLException e) {
             System.out.println("Errore nell'esecuzione della query\n");
             e.printStackTrace();
-        }
-        finally {
-            stmt.close();
         }
         return null;
     }

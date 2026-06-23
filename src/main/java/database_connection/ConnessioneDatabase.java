@@ -25,6 +25,9 @@ public class ConnessioneDatabase {
         }
         return instance;
     }
+    public Connection getConnection() throws SQLException{
+        return conn;
+    }
     public ResultSet executeQuery(String query) throws SQLException {
         PreparedStatement statement = conn.prepareStatement(query);
         try {
