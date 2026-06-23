@@ -6,7 +6,7 @@ import java.sql.*;
 import java.time.LocalDate;
 
 public interface TirocinioDAO {
-    public String getDescrizione(String docente, String nome, LocalDate data, ConnessioneDatabase conn)throws SQLException;
-    public ResultSet queryViaTirocinio(String query,ConnessioneDatabase conn) throws SQLException;
-    public ResultSet getAllTirocinio(ConnessioneDatabase conn) throws SQLException;
+    public String getDescrizione(String docente, String nome, LocalDate data, ConnessioneDatabase conn);
+    public ResultSet queryViaTirocinio(String query,ConnessioneDatabase conn) ;
+    public ResultSet getAllTirocinio(ConnessioneDatabase conn) ;
 }

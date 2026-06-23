@@ -7,7 +7,7 @@ import java.sql.*;
 import java.time.LocalDate;
 
 public class TirocinioImplementazionePostgres implements TirocinioDAO {
-    public String getDescrizione(String docente, String nome, LocalDate data, ConnessioneDatabase conn)throws SQLException{
+    public String getDescrizione(String docente, String nome, LocalDate data, ConnessioneDatabase conn){
         try{
             String y=null;
             ResultSet x=conn.executeQuery("SELECT Descrizione FROM Tirocinio WHERE Nome='"+nome+"' AND Data='"+data+"' AND Docente='"+docente+"'");
@@ -22,7 +22,7 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
         }
         return null;
     }
-    public ResultSet queryViaTirocinio(String query, ConnessioneDatabase conn) throws SQLException{
+    public ResultSet queryViaTirocinio(String query, ConnessioneDatabase conn) {
         try{
             return conn.executeQuery(query);
         }
@@ -32,7 +32,7 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
         }
         return null;
     }
-    public ResultSet getAllTirocinio(ConnessioneDatabase conn) throws SQLException{
+    public ResultSet getAllTirocinio(ConnessioneDatabase conn) {
         try{
             return conn.executeQuery("SELECT * FROM Tirocinio");
         }

@@ -7,7 +7,7 @@ import java.sql.*;
 import java.time.LocalDate;
 
 public class RichiestaImplementazionePostgres implements RichiestaDAO {
-    public char getStato(LocalDate data, String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) throws SQLException{
+    public char getStato(LocalDate data, String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) {
         try{
             char s='\0';
             ResultSet x=conn.executeQuery("SELECT Stato from Richiesta WHERE Richiesta.Login = '"+studente+"' AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"')");
@@ -22,7 +22,7 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
 
         return '\0';
     }
-    public Boolean setStato(char stato,LocalDate data,String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) throws SQLException{
+    public Boolean setStato(char stato,LocalDate data,String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) {
         try{
             conn.executeQuery("UPDATE Richiesta SET Stato ='"+stato+"'WHERE Richiesta.Login = '"+studente+"' AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"')").close();
             return true;
@@ -34,7 +34,7 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
 
         return false;
     }
-    public ResultSet queryViaRichiesta(String query, ConnessioneDatabase conn) throws SQLException{
+    public ResultSet queryViaRichiesta(String query, ConnessioneDatabase conn) {
         try{
             return conn.executeQuery(query);
         }
@@ -45,7 +45,7 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
 
         return null;
     }
-    public ResultSet getAllRichiesta(ConnessioneDatabase conn) throws SQLException{
+    public ResultSet getAllRichiesta(ConnessioneDatabase conn) {
         try{
             return conn.executeQuery("SELECT * FROM Richiesta");
         }

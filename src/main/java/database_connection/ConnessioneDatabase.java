@@ -25,14 +25,11 @@ public class ConnessioneDatabase {
         }
         return instance;
     }
-    public Connection getConnection() throws SQLException{
-        return conn;
-    }
+
     public ResultSet executeQuery(String query) throws SQLException {
         PreparedStatement statement = conn.prepareStatement(query);
         try {
-            ResultSet x = statement.executeQuery();
-            return x;
+            return statement.executeQuery();
         } catch (SQLException e) {
             System.out.println("Errore nell'esecuzione della query: " + e.getMessage());
             e.printStackTrace();

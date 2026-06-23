@@ -1,9 +1,11 @@
 package controller;
+import com.sun.jdi.InconsistentDebugInfoException;
 import database_connection.ConnessioneDatabase;
 import implementazioneDao.*;
 import model.*;
 
 import java.sql.ResultSet;
+import java.lang.Exception.*;
 import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
@@ -15,46 +17,61 @@ public class Controller {
 	ArrayList<Richiesta> richieste = new ArrayList<>();
 	ArrayList<Seduta> sedute=new ArrayList<>();
 	ArrayList<Tesi> tesi=new ArrayList<>();
-	StudenteImplementazionePostgres StudenteDao = new StudenteImplementazionePostgres();
-	DocenteImplementazionePostgres DocenteDao = new DocenteImplementazionePostgres();
-	RichiestaImplementazionePostgres RichiestaDao = new RichiestaImplementazionePostgres();
-	TesiImplementazionePostgres  TesiDao = new TesiImplementazionePostgres();
-	TirocinioImplementazionePostgres TirocinioDao = new TirocinioImplementazionePostgres();
-	TirocinioEsternoImplementazionePostgres TirocinioEsternoDao = new TirocinioEsternoImplementazionePostgres();
-	SedutaImplementazionePostgres SedutaDao = new SedutaImplementazionePostgres();
+	StudenteImplementazionePostgres studenteDao = new StudenteImplementazionePostgres();
+	DocenteImplementazionePostgres docenteDao = new DocenteImplementazionePostgres();
+	RichiestaImplementazionePostgres richiestaDao = new RichiestaImplementazionePostgres();
+	TesiImplementazionePostgres  tesiDao = new TesiImplementazionePostgres();
+	TirocinioImplementazionePostgres tirocinioDao = new TirocinioImplementazionePostgres();
+	TirocinioEsternoImplementazionePostgres tirocinioEsternoDao = new TirocinioEsternoImplementazionePostgres();
+	SedutaImplementazionePostgres sedutaDao = new SedutaImplementazionePostgres();
 
-	public Controller() throws SQLException {
-		//Integrità con il DB dei dati
-		//valori di test da eliminare
+	public Controller(){
+		//todo
 	}
 
-	public Utente login(String email, String password, boolean isDocente){
+	public Utente login(String email, String password, boolean isDocente)throws InconsistencyException{
 		Utente log=null;
 		if(isDocente){
 			for(Docente x:docenti){
 				log=x.logIn(email, password);
 			}
-			try {
-				if(log==null && DocenteDao.login(email,password,ConnessioneDatabase.getInstance())){
-					System.out.println("Docente non trovato");
-				}
-			}
-			catch (Exception e) {
-				System.out.println("Problema nell'esecuzione\n"+e.getMessage());
-			}
 		}
 		else{
-			for (Studente x : studenti){
-				log=x.logIn(email, password);
-			}
-			if(log==null){
-				System.out.println("Studente non trovato in locale, richiesta al db");
+			for (Studente x : studenti) {
+				log = x.logIn(email, password);
 			}
 		}
+		if (log==null)
+			try {
+				if(isDocente&&!docenteDao.login(email,password,ConnessioneDatabase.getInstance()))
+					throw new InconsistencyException("Docente trovato in locale e non in db");
+				else if(!isDocente&&!studenteDao.login(email,password,ConnessioneDatabase.getInstance()))
+					throw new InconsistencyException("Studente trovato in locale e non in db");
+			}
+			catch (SQLException e) {
+				System.out.println("Problema nell'esecuzione della query\n");
+				e.printStackTrace();
+			}
 		return log;
 	}
-	public void logout(Utente u){
-			u.logOut();
+	public void logout(Utente u,boolean isDocente)throws InconsistencyException{
+			try{
+				boolean x;
+				u.logOut();
+				if(isDocente)
+					x=docenteDao.logout(u.getLogin(),ConnessioneDatabase.getInstance());
+				else
+					x=studenteDao.logout(u.getLogin(),ConnessioneDatabase.getInstance());
+				if(!x)
+					throw new InconsistencyException("Docente logout in locale ma non in db");
+			}
+			catch(NullPointerException e){
+				System.out.println("Problema nell'esecuzione\n");
+				e.printStackTrace();
+			}
+			catch (SQLException e) {
+				System.out.println("Problema nell'esecuzione della query\n");
+			}
 	}
 
 	public String vediTirocini(Utente user, boolean isDocente){
@@ -93,7 +110,7 @@ public class Controller {
 
 	public boolean faiRichiesta(Studente studente,Tirocinio tirocinio) throws NullPointerException{
 		try{
-			Richiesta r=studente.faiRichiesta(LocalDate.now(),tirocinio);
+			Richiesta r=studente.faiRichiesta(LocalDate.now(ZoneId.systemDefault()),tirocinio);
 			//integrità con DB
 			//se DB Approva Modifica
 			richieste.add(r);
@@ -270,36 +287,13 @@ public class Controller {
 		return null;
 	}
 	public Boolean prenotaSedutaDiLaurea(Studente st,Seduta se,Tesi t){
-		return st.PrenotaSedutadiLaurea(se,t);
+		return st.prenotaSedutadiLaurea(se,t);
 	}
 	public Boolean inserisciVotoSedutaDiLaurea(Docente d,Seduta s,int voto){
 		return d.aggiungiVotoSedutaDiLaurea(s,voto);
 	}
-
-
 }
 /*
-todo:
-login studente OK
-login docente OK
-docente\studente:vedi tirocinio OK
-docente: nuovo tirocinio OK
-docente:accetta/rifiuta richiesta OK
-docente: elimina tirocinio OK
-docente/studente:cerca tirocinio OK
-cerca elaborato e cerca richiesta ok
-docente\studente:vedi elaborato ok
-docente:accetta/rifiuta elaborato ok
-docente:aggiungi seduta di laurea OK
-docente:carica voto seduta di laurea OK
-studente:fai richiesta OK
-studente\docente:vedi richieste OK
-studente:vedi stato richieste OK
-studente:aggiungi elaborato OK
-studente:modifica elaborato OK
-studente visualizza sedute di laurea OK
-studente prenota seduta di laurea OK
-
  ui: login docente
  login studente
  home docente (pulsanti che chiamano altre finestre e funzioni controller)

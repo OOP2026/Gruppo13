@@ -5,6 +5,7 @@ import database_connection.ConnessioneDatabase;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 public class StudenteImplementazionePostgres implements StudenteDAO {
     public ResultSet queryViaUtente(String query, ConnessioneDatabase conn) {
@@ -165,7 +166,7 @@ public class StudenteImplementazionePostgres implements StudenteDAO {
     }
     public Boolean aggiungiRichiesta(String matricola, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn){
         try{
-            conn.executeQuery("INSERT INTO Richiesta(Login,Data,ID_Ti) VALUES ((SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'),'"+LocalDate.now()+"',(SELECT ID_Ti FROM Tirocinio T WHERE T.Nome='"+nometirocinio+"' AND T.Data='"+datatirocinio.toString()+"' AND T.Login='"+docente+"'))").close();
+            conn.executeQuery("INSERT INTO Richiesta(Login,Data,ID_Ti) VALUES ((SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'),'"+LocalDate.now(ZoneId.systemDefault())+"',(SELECT ID_Ti FROM Tirocinio T WHERE T.Nome='"+nometirocinio+"' AND T.Data='"+datatirocinio.toString()+"' AND T.Login='"+docente+"'))").close();
             return true;
         }
         catch(SQLException e) {

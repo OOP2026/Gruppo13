@@ -8,7 +8,7 @@ public abstract class Utente {
     protected String email;
     protected boolean loggedin = false;
 
-    public Utente(String nome, String cognome, String password, String login,String  email){
+    protected Utente(String nome, String cognome, String password, String login,String  email){
             this.nome = nome;
             this.cognome = cognome;
             this.password = password;

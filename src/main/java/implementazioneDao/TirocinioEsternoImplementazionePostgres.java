@@ -2,17 +2,15 @@ package implementazioneDao;
 
 import dao.TirocinioEsternoDAO;
 import database_connection.ConnessioneDatabase;
-
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementazionePostgres implements TirocinioEsternoDAO {
-    public String getNomeAzienda(String docente,String nome, LocalDate data, ConnessioneDatabase conn)throws SQLException{
+    public String getNomeAzienda(String docente,String nome, LocalDate data, ConnessioneDatabase conn){
         try{
             String y=null;
-            ResultSet x=conn.executeQuery("SELECT NomeAzienda FROM Tirocinio NATURAL JOIN TirocinioEsterno WHERE Nome='"+nome+"' AND Data='"+data+"' AND Docente='"+docente+"'");;
+            ResultSet x=conn.executeQuery("SELECT NomeAzienda FROM Tirocinio NATURAL JOIN TirocinioEsterno WHERE Nome='"+nome+"' AND Data='"+data+"' AND Docente='"+docente+"'");
             if (x.next())
                 y=x.getString("Descrizione");
             x.close();
@@ -25,10 +23,10 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
         
         return null;
     }
-    public String getReferente(String docente,String nome, LocalDate data,ConnessioneDatabase conn)throws SQLException{
+    public String getReferente(String docente,String nome, LocalDate data,ConnessioneDatabase conn){
         try{
             String y=null;
-            ResultSet x=conn.executeQuery("SELECT Referente FROM Tirocinio NATURAL JOIN TirocinioEsterno WHERE Nome='"+nome+"' AND Data='"+data+"' AND Docente='"+docente+"'");;
+            ResultSet x=conn.executeQuery("SELECT Referente FROM Tirocinio NATURAL JOIN TirocinioEsterno WHERE Nome='"+nome+"' AND Data='"+data+"' AND Docente='"+docente+"'");
             if (x.next())
                 y=x.getString("Descrizione");
             x.close();
@@ -40,7 +38,7 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
         }
         return null;
     }
-    public ResultSet queryViaTirocinioEsterno(String query, ConnessioneDatabase conn)throws SQLException{
+    public ResultSet queryViaTirocinioEsterno(String query, ConnessioneDatabase conn){
         try{
             return conn.executeQuery(query);
         }
@@ -50,7 +48,7 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
         }
         return null;
     }
-    public ResultSet getAllTirocinioEsterno(ConnessioneDatabase conn)throws SQLException{
+    public ResultSet getAllTirocinioEsterno(ConnessioneDatabase conn){
         try{
             return conn.executeQuery("SELECT * FROM Tirocinio NATURAL JOIN TirocinioEsterno");
         }

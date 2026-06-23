@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class SedutaImplementazionePostgres implements SedutaDAO {
-    public ResultSet getTesi(LocalDate data, LocalTime ora, String docente, ConnessioneDatabase conn) throws SQLException{
+    public ResultSet getTesi(LocalDate data, LocalTime ora, String docente, ConnessioneDatabase conn) {
         try{
             return conn.executeQuery("SELECT 1 FROM Tesi WHERE Tesi.IdTe=(SELECT ID_Te FROM Seduta WHERE Login='"+docente+"'AND Data='"+data.toString()+"' AND Ora='"+ora.toString()+"')");
         }
@@ -19,7 +19,7 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
 
         return null;
     }
-    public Boolean setTesi(LocalDate data, LocalTime ora,String docente,String studente,String nometirocinio, LocalDate datatirocinio,ConnessioneDatabase conn) throws SQLException{
+    public Boolean setTesi(LocalDate data, LocalTime ora,String docente,String studente,String nometirocinio, LocalDate datatirocinio,ConnessioneDatabase conn) {
         try{
             conn.executeQuery("UPDATE Seduta SET Seduta.IdTe =(SELECT ID_Te from Tesi WHERE WHERE ID_Ri=(Select ID_Ri from Richiesta WHERE Richiesta.Login = '"+studente+"' AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"')))WHERE Login='"+docente+"'AND Data='"+data.toString()+"' AND Ora='"+ora.toString()+"'").close();
             return true;
@@ -31,10 +31,10 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
 
         return false;
     }
-    public int getVotoFinale(LocalDate data,LocalTime ora,String docente,ConnessioneDatabase conn) throws SQLException{
+    public int getVotoFinale(LocalDate data,LocalTime ora,String docente,ConnessioneDatabase conn) {
         try{
             int v=-1;
-            ResultSet x = conn.executeQuery("SELECT VotoFinale FROM Seduta WHERE Login='"+docente+"'AND Data='"+data.toString()+"' AND Ora='"+ora.toString()+"'");;
+            ResultSet x = conn.executeQuery("SELECT VotoFinale FROM Seduta WHERE Login='"+docente+"'AND Data='"+data.toString()+"' AND Ora='"+ora.toString()+"'");
             if (x.next())
                 v=x.getInt("VotoFinale");
             return v;
@@ -46,7 +46,7 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
         return -2;
     }
 
-    public ResultSet getAllSeduta(ConnessioneDatabase conn) throws SQLException{
+    public ResultSet getAllSeduta(ConnessioneDatabase conn) {
         try{
             return conn.executeQuery("SELECT * FROM Seduta");
         }
@@ -57,7 +57,7 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
 
         return null;
     }
-    public ResultSet queryViaSeduta(String query,ConnessioneDatabase conn) throws SQLException{
+    public ResultSet queryViaSeduta(String query,ConnessioneDatabase conn) {
         try{
             return conn.executeQuery(query);
         }

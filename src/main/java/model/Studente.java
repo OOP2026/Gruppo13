@@ -53,7 +53,7 @@ public class Studente extends Utente {
         return "";
     }
 
-    public boolean PrenotaSedutadiLaurea(Seduta s, Tesi t) {
+    public boolean prenotaSedutadiLaurea(Seduta s, Tesi t) {
         if(t!=null&&t.getRichiesta().getStudente().equals(this)&&t.getStato()=='V'){
             s.setTesi(t);
             return true;
