@@ -49,7 +49,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
         }
         return null;
     }
-    public Boolean setContenuto(String contenuto,String studente, String nometirocinio, LocalDate datatirocinio, String docente,ConnessioneDatabase conn) {
+    public Boolean setContenuto(String contenuto, String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) {
         try{
             conn.executeQuery("UPDATE Tesi SET Contenuto='"+contenuto+"' WHERE ID_Ri=(SELECT ID_Ri FROM Richiesta WHERE Login='"+studente+"' AND ID_Ti=(SELECT ID_Ti FROM Tirocinio WHERE Login='"+docente+"' AND Data='"+datatirocinio.toString()+"' AND Nome='"+nometirocinio+"'))").close();
             return true;
@@ -59,7 +59,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
         }
         return false;
     }
-    public String getContenuto(String studente, String nometirocinio, LocalDate datatirocinio, String docente,ConnessioneDatabase conn) {
+    public String getContenuto(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) {
 
         try{
             String y=null;

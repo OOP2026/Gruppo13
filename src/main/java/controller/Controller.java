@@ -3,8 +3,6 @@ import database_connection.ConnessioneDatabase;
 import implementazioneDao.*;
 import model.*;
 
-import java.sql.ResultSet;
-import java.lang.Exception.*;
 import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
@@ -43,9 +41,9 @@ public class Controller {
 		}
 		if (log==null)
 			try {
-				if(isDocente&&!docenteDao.login(email,password,ConnessioneDatabase.getInstance()))
+				if(isDocente&&!docenteDao.login(email,password, ConnessioneDatabase.getInstance()))
 					throw new InconsistencyException("Docente trovato in locale e non in db");
-				else if(!isDocente&&!studenteDao.login(email,password,ConnessioneDatabase.getInstance()))
+				else if(!isDocente&&!studenteDao.login(email,password, ConnessioneDatabase.getInstance()))
 					throw new InconsistencyException("Studente trovato in locale e non in db");
 			}
 			catch (SQLException e) {
@@ -58,9 +56,9 @@ public class Controller {
 				boolean x;
 				u.logOut();
 				if(isDocente)
-					x=docenteDao.logout(u.getLogin(),ConnessioneDatabase.getInstance());
+					x=docenteDao.logout(u.getLogin(), ConnessioneDatabase.getInstance());
 				else
-					x=studenteDao.logout(u.getLogin(),ConnessioneDatabase.getInstance());
+					x=studenteDao.logout(u.getLogin(), ConnessioneDatabase.getInstance());
 				if(!x)
 					throw new InconsistencyException("Docente logout in locale ma non in db");
 			}

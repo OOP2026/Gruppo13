@@ -22,7 +22,7 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
         
         return null;
     }
-    public String getReferente(String docente,String nome, LocalDate data,ConnessioneDatabase conn){
+    public String getReferente(String docente, String nome, LocalDate data, ConnessioneDatabase conn){
         try{
             String y=null;
             ResultSet x=conn.executeQuery("SELECT Referente FROM Tirocinio NATURAL JOIN TirocinioEsterno WHERE Nome='"+nome+"' AND Data='"+data+"' AND Docente='"+docente+"'");

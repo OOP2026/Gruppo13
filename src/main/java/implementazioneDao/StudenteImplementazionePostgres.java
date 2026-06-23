@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 
 public class StudenteImplementazionePostgres extends StudenteDAO {
-    public Boolean setPassword(String username, String password,ConnessioneDatabase conn) {
+    public Boolean setPassword(String username, String password, ConnessioneDatabase conn) {
         try{
             conn.executeQuery("UPDATE Studente set Password = '"+password+"' WHERE Docente.Login = '"+username+"'").close();
             return true;
@@ -18,7 +18,7 @@ public class StudenteImplementazionePostgres extends StudenteDAO {
         }
         return false;
     }
-    public Boolean setUsername(String oldusername, String newusername,ConnessioneDatabase conn) {
+    public Boolean setUsername(String oldusername, String newusername, ConnessioneDatabase conn) {
 
         try{
             conn.executeQuery("UPDATE Studente set Login = '"+newusername+"' WHERE Studente.Login = '"+oldusername+"'").close();
@@ -30,7 +30,7 @@ public class StudenteImplementazionePostgres extends StudenteDAO {
         
         return false;
     }
-    public Boolean login(String username,String password,ConnessioneDatabase conn) {
+    public Boolean login(String username, String password, ConnessioneDatabase conn) {
         try{
             conn.executeQuery("UPDATE Studente set Stato = TRUE WHERE Studente.Login = '"+username+"' AND Password = '"+password+"'").close();
             return true;
@@ -41,7 +41,7 @@ public class StudenteImplementazionePostgres extends StudenteDAO {
         
         return false;
     }
-    public Boolean logout(String username,ConnessioneDatabase conn) {
+    public Boolean logout(String username, ConnessioneDatabase conn) {
         try{
             conn.executeQuery("UPDATE Studente set Stato = FALSE WHERE Studente.Login = '"+username+"'").close();
             return true;
@@ -53,7 +53,7 @@ public class StudenteImplementazionePostgres extends StudenteDAO {
         return false;
     }
     //MAY BE NULL
-    public String getNome(String username,ConnessioneDatabase conn) {
+    public String getNome(String username, ConnessioneDatabase conn) {
         try{
             String y=null;
             ResultSet x = conn.executeQuery("SELECT Nome FROM Studente WHERE Studente.Login = '"+username+"'");
@@ -68,7 +68,7 @@ public class StudenteImplementazionePostgres extends StudenteDAO {
         return null;
     }
     //MAY BE NULL
-    public String getCognome(String username,ConnessioneDatabase conn) {
+    public String getCognome(String username, ConnessioneDatabase conn) {
         try{
             String y=null;
             ResultSet x=conn.executeQuery("SELECT Cognome FROM Studente WHERE Studente.Login = '"+username+"'");
@@ -84,7 +84,7 @@ public class StudenteImplementazionePostgres extends StudenteDAO {
         return null;
     }
     //MAY BE NULL
-    public String getEmail(String username,ConnessioneDatabase conn) {
+    public String getEmail(String username, ConnessioneDatabase conn) {
 
         try{
             String y=null;
@@ -101,7 +101,7 @@ public class StudenteImplementazionePostgres extends StudenteDAO {
         return null;
     }
     //MAY BE NULL
-    public String getPassword(String username,ConnessioneDatabase conn) {
+    public String getPassword(String username, ConnessioneDatabase conn) {
 
         try{
             String y=null;
@@ -117,7 +117,7 @@ public class StudenteImplementazionePostgres extends StudenteDAO {
         
         return null;
     }
-    public String getMatricola(String username,ConnessioneDatabase conn) {
+    public String getMatricola(String username, ConnessioneDatabase conn) {
 
         try{
             String y=null;
@@ -155,7 +155,7 @@ public class StudenteImplementazionePostgres extends StudenteDAO {
         
         return false;
     }
-    public Boolean aggiornaTesi(String matricola,String contenuto,String nometirocinio, LocalDate datatirocinio, String docente,ConnessioneDatabase conn) {
+    public Boolean aggiornaTesi(String matricola, String contenuto, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) {
            try{
                conn.executeQuery("UPDATE Tesi SET Tesi.Contenuto = '"+contenuto+"' WHERE ID_Ri=(Select ID_Ri from Richiesta WHERE Richiesta.Login = (SELECT Login FROM Studente S WHERE S.Matricola='"+matricola+"') AND Richiesta.ID_Ti = (SELECT ID_Ti FROM Tirocinio WHERE Tirocinio.Nome ='"+nometirocinio+"' AND Tirocinio.data = '"+datatirocinio.toString()+"' AND Tirocinio.Login = '"+docente+"'))").close();
                return true;
@@ -176,7 +176,7 @@ public class StudenteImplementazionePostgres extends StudenteDAO {
         
         return false;
     }
-    public ResultSet getAllTesi(String matricola,ConnessioneDatabase conn) {
+    public ResultSet getAllTesi(String matricola, ConnessioneDatabase conn) {
         try{
             return conn.executeQuery("SELECT * FROM Tesi WHERE ID_Ri=ANY(SELECT ID_Ri from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"'))");
         }
@@ -185,7 +185,7 @@ public class StudenteImplementazionePostgres extends StudenteDAO {
         }
         return null;
     }
-    public ResultSet getAllRichiesta(String matricola,ConnessioneDatabase conn) {
+    public ResultSet getAllRichiesta(String matricola, ConnessioneDatabase conn) {
        try{
             return conn.executeQuery("SELECT * from Richiesta WHERE Login=(SELECT Login FROM Studente WHERE Matricola ='"+matricola+"')");
        }
