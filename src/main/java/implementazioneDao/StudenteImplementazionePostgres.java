@@ -7,7 +7,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
-public class StudenteImplementazionePostgres extends StudenteDAO {
+public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgres implements StudenteDAO{
     public Boolean setPassword(String username, String password, ConnessioneDatabase conn) {
         try{
             conn.executeQuery("UPDATE Studente set Password = '"+password+"' WHERE Docente.Login = '"+username+"'").close();

@@ -3,18 +3,7 @@ import database_connection.ConnessioneDatabase;
 import implementazioneDao.SQLExceptionHandler;
 
 import java.sql.*;
-public abstract class UtenteDAO {
-    public ResultSet queryViaUtente(String query, ConnessioneDatabase conn){
-        public ResultSet queryViaUtente(String query, ConnessioneDatabase conn) {
-            try{
-                return conn.executeQuery(query);
-            }
-            catch(SQLException e){
-                SQLExceptionHandler.handleSQLException(e);
-            }
-            return null;
-        }
-    };
+public interface UtenteDAO {
     public Boolean setPassword(String username, String password, ConnessioneDatabase conn) ;
     public Boolean setUsername(String oldusername, String newusername, ConnessioneDatabase conn) ;
     public Boolean login(String email, String password, ConnessioneDatabase conn) ;

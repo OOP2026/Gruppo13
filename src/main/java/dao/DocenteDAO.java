@@ -5,7 +5,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public abstract class DocenteDAO extends UtenteDAO{
+public interface DocenteDAO extends UtenteDAO{
     public Boolean accettaRichiesta(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn);
     public Boolean rifiutaRichiesta(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn);
     public Boolean rifiutaTesi(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) ;
