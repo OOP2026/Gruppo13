@@ -5,11 +5,11 @@ public class ConnessioneDatabase {
     private Connection conn;
     private static ConnessioneDatabase instance;
     private static final String NOME= "postgres";
-    private static final String PASSWORD = "Fausty886";
+    private static final String PW = "Fausty886";
     private static final String URL = "jdbc:postgresql://localhost:5432/Borsa";
 
     private ConnessioneDatabase() throws SQLException {
-            conn = DriverManager.getConnection(URL, NOME, PASSWORD);
+            conn = DriverManager.getConnection(URL, NOME, PW);
     }
 
     public static ConnessioneDatabase getInstance() throws SQLException {
