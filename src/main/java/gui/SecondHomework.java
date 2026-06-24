@@ -1,9 +1,13 @@
 package gui;
 
+import controller.Controller;
+import implementazioneDao.InconsistencyException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import static implementazioneDao.ExceptionHandler.*;
 
 public class SecondHomework {
     private JPanel panel;
@@ -13,7 +17,12 @@ public class SecondHomework {
     private JButton studenteBtn;
 
     public SecondHomework() {
-
+        try {
+            Controller controller = new Controller();
+        } catch (InconsistencyException e) {
+            handleInconsistencyException(e);
+            return;
+        }
         // Bottone Docente
         docenteBtn.addActionListener(new ActionListener() {
             @Override

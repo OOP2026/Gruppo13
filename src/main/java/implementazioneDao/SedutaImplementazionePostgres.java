@@ -46,7 +46,7 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
 
     public ResultSet getAll(ConnessioneDatabase conn) {
         try{
-            return conn.executeQuery("SELECT * FROM Seduta");
+            return conn.executeQuery("SELECT * FROM Seduta se JOIN Tesi te ON se.id_te=te.id_te JOIN Richiesta r ON te.ID_Ri=r.ID_Ri JOIN Tirocinio ti ON ti.ID_Ti=r.ID_Ti");
         }
         catch(SQLException e) {
             handleSQLException(e);

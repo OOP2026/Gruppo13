@@ -11,8 +11,15 @@ public class Seduta {
     public Seduta(LocalDate data, LocalTime ora,Docente docente) {
         this.data = data;
         this.ora = ora;
-        this.voto = -1;
+        this.voto = 0;
         this.tesi = null;
+        this.docente = docente;
+    }
+    public Seduta(LocalDate data, LocalTime ora, int voto, Tesi tesi,Docente docente) {
+        this.data = data;
+        this.ora = ora;
+        setVoto(voto);
+        this.tesi = tesi;
         this.docente = docente;
     }
     public LocalDate getData() {
@@ -20,7 +27,7 @@ public class Seduta {
     }
     public LocalTime getOra(){ return ora; }
     public void setVoto(int voto) {
-        this.voto = voto;
+        if(voto>=0 && voto<=111)this.voto = voto;
     }
     public int getVoto() {
         return voto;
@@ -40,7 +47,7 @@ public class Seduta {
         String s = "Seduta del "+data.toString()+" alle "+ora.toString()+" del docente "+docente.getCognome()+" "+docente.getNome()+"\n"+"";
         if(tesi==null)
             s+="Libera";
-        else if (voto>=-1)
+        else if (voto>0)
             s+="Conclusa con voto"+voto+", tesi allegata:"+tesi.getContenuto();
         else
             s+="Prenotata, tesi allegata:"+tesi.getContenuto();

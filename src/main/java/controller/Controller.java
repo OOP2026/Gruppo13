@@ -44,15 +44,16 @@ public class Controller {
 			}
 			x=richiestaDao.getAll(getInstance());
 			while(x.next()){
-				richieste.add(new Richiesta(x.getString("r.data"),cercaStudente(x.getString("login"),cercaTirocinio(x.getString("t.nome"),x.getDate("t.data").toLocalDate(),cercaDocente(x.getString("t.login")),x.getString("stato").toCharArray()[0]))));
+				Richiesta r = new Richiesta(x.getDate("r.data").toLocalDate(),cercaStudente(x.getString("login")),cercaTirocinio(x.getString("t.nome"),x.getDate("t.data").toLocalDate(),cercaDocente(x.getString("t.login"))));
+				richieste.add(r);
 			}
 			x=tesiDao.getAll(getInstance());
 			while(x.next()){
-			//  tesi.add(new Tesi);
+				tesi.add(new Tesi(x.getString("contenuto"),cercaRichiesta(cercaStudente(x.getString("login")),cercaTirocinio(x.getString("t.nome"),x.getDate("t.data").toLocalDate(),cercaDocente(x.getString("t.login"))))));
 			}
 			x=sedutaDao.getAll(getInstance());
 			while(x.next()){
-			//	sedute.add(new Seduta);
+				sedute.add(new Seduta(x.getDate("se.data").toLocalDate(),x.getTime("ora").toLocalTime(),x.getInt("voto"),cercaTesi(cercaRichiesta(cercaStudente(x.getString("r.login")),cercaTirocinio(x.getString("ti.nome"),x.getDate("ti.data").toLocalDate(),cercaDocente(x.getString("ti.login"))))),cercaDocente(x.getString("te.login"))));
 			}
 		} catch (SQLException e) {
 			throw new InconsistencyException("Fallimento nella presa del db dei dati, impossibile inizializzare localmente");

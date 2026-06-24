@@ -42,7 +42,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
     }
     public ResultSet getAll(ConnessioneDatabase conn) {
         try{
-            return conn.executeQuery("SELECT * FROM Tesi");
+            return conn.executeQuery("SELECT * FROM Tesi te JOIN Richiesta r ON te.ID_Ri=r.ID_Ri JOIN Tirocinio ti ON ti.ID_Ti=r.ID_Ti");
         }
         catch(SQLException e) {
             handleSQLException(e);
