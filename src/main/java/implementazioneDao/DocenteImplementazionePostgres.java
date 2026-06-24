@@ -5,7 +5,7 @@ import database_connection.ConnessioneDatabase;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import static implementazioneDao.ExceptionHandler.*;
+import static utilities.ExceptionHandler.*;
 
 public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgres implements DocenteDAO {
     @Override

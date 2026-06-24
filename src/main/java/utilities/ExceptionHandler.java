@@ -1,4 +1,4 @@
-package implementazioneDao;
+package utilities;
 
 import java.sql.SQLException;
 public class ExceptionHandler {

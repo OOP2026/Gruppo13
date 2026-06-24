@@ -5,7 +5,7 @@ import database_connection.ConnessioneDatabase;
 
 import java.sql.*;
 import java.time.LocalDate;
-import static implementazioneDao.ExceptionHandler.*;
+import static utilities.ExceptionHandler.*;
 public class TirocinioImplementazionePostgres implements TirocinioDAO {
     public String getDescrizione(String docente, String nome, LocalDate data, ConnessioneDatabase conn){
         try{

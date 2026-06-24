@@ -5,7 +5,7 @@ import database_connection.ConnessioneDatabase;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import static implementazioneDao.ExceptionHandler.*;
+import static utilities.ExceptionHandler.*;
 public class TesiImplementazionePostgres implements TesiDAO {
     public char getStato(String studente, String nometirocinio, LocalDate datatirocinio, String docente, ConnessioneDatabase conn) {
         try{

@@ -5,7 +5,7 @@ import database_connection.ConnessioneDatabase;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import static implementazioneDao.ExceptionHandler.*;
+import static utilities.ExceptionHandler.*;
 public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementazionePostgres implements TirocinioEsternoDAO {
     public String getNomeAzienda(String docente,String nome, LocalDate data, ConnessioneDatabase conn){
         try{

@@ -5,7 +5,7 @@ import database_connection.ConnessioneDatabase;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static implementazioneDao.ExceptionHandler.handleSQLException;
+import static utilities.ExceptionHandler.handleSQLException;
 
 
 public class UtenteImplenentazionePostgres {

@@ -1,13 +1,13 @@
 package gui;
 
 import controller.Controller;
-import implementazioneDao.InconsistencyException;
+import utilities.InconsistencyException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import static implementazioneDao.ExceptionHandler.*;
+import static utilities.ExceptionHandler.*;
 
 public class SecondHomework {
     private JPanel panel;

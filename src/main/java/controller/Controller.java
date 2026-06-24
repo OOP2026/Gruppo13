@@ -1,6 +1,7 @@
 package controller;
 import implementazioneDao.*;
 import model.*;
+import utilities.InconsistencyException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,7 +9,7 @@ import java.time.*;
 import java.util.*;
 
 import static database_connection.ConnessioneDatabase.getInstance;
-import static implementazioneDao.ExceptionHandler.*;
+import static utilities.ExceptionHandler.*;
 
 public class Controller {
 	ArrayList<Docente> docenti = new ArrayList<>();
@@ -24,7 +25,7 @@ public class Controller {
 	TirocinioImplementazionePostgres tirocinioDao = new TirocinioImplementazionePostgres();
 	TirocinioEsternoImplementazionePostgres tirocinioEsternoDao = new TirocinioEsternoImplementazionePostgres();
 	SedutaImplementazionePostgres sedutaDao = new SedutaImplementazionePostgres();
-	public Controller() throws InconsistencyException{
+	public Controller() throws InconsistencyException {
 		try {
 			ResultSet x = studenteDao.getAll(getInstance());
 			while(x.next()){
