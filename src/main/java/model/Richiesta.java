@@ -12,6 +12,12 @@ public class Richiesta {
         this.studente = studente;
         this.tirocinio = tirocinio;
     }
+    public Richiesta(LocalDate data,Studente studente,Tirocinio tirocinio,char stato) {
+        this.data = data;
+        this.studente = studente;
+        this.tirocinio = tirocinio;
+        this.stato = stato;
+    }
 
     public Tirocinio getTirocinio() {
         return tirocinio;

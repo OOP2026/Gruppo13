@@ -124,7 +124,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
         }
         return null;
     }
-    public ResultSet getAllDocente(ConnessioneDatabase conn) {
+    public ResultSet getAll(ConnessioneDatabase conn) {
         try{
             return conn.executeQuery("SELECT * FROM Docente");
         }

@@ -40,7 +40,7 @@ public class TesiImplementazionePostgres implements TesiDAO {
         }
         return null;
     }
-    public ResultSet getAllTesi(ConnessioneDatabase conn) {
+    public ResultSet getAll(ConnessioneDatabase conn) {
         try{
             return conn.executeQuery("SELECT * FROM Tesi");
         }

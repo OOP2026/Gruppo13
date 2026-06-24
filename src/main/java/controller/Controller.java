@@ -24,9 +24,39 @@ public class Controller {
 	TirocinioImplementazionePostgres tirocinioDao = new TirocinioImplementazionePostgres();
 	TirocinioEsternoImplementazionePostgres tirocinioEsternoDao = new TirocinioEsternoImplementazionePostgres();
 	SedutaImplementazionePostgres sedutaDao = new SedutaImplementazionePostgres();
-
-	public Controller(){
-		//todo
+	public Controller() throws InconsistencyException{
+		try {
+			ResultSet x = studenteDao.getAll(getInstance());
+			while(x.next()){
+				studenti.add(new Studente(x.getString("nome"),x.getString("cognome"),x.getString("password"),x.getString("login"),x.getString("email"),x.getString("matricola")));
+			}
+			x=docenteDao.getAll(getInstance());
+			while(x.next()){
+				docenti.add(new Docente(x.getString("nome"),x.getString("cognome"),x.getString("password"),x.getString("login"),x.getString("email"),x.getBoolean("coordinatore")));
+			}
+			x=tirocinioDao.getAll(getInstance());
+			while(x.next()){
+				tirocini.add(new TirocinioInterno(x.getString("nome"),x.getString("descrizione"),cercaDocente(x.getString("login")),x.getDate("Data").toLocalDate()));
+			}
+			x=tirocinioEsternoDao.getAll(getInstance());
+			while(x.next()){
+				tirocini.add(new TirocinioEsterno(x.getString("nome"),x.getString("descrizione"),cercaDocente(x.getString("login")),x.getDate("Data").toLocalDate(),x.getString("nomeazienda"),x.getString("referente")));
+			}
+			x=richiestaDao.getAll(getInstance());
+			while(x.next()){
+				richieste.add(new Richiesta(x.getString("r.data"),cercaStudente(x.getString("login"),cercaTirocinio(x.getString("t.nome"),x.getDate("t.data").toLocalDate(),cercaDocente(x.getString("t.login")),x.getString("stato").toCharArray()[0]))));
+			}
+			x=tesiDao.getAll(getInstance());
+			while(x.next()){
+			//  tesi.add(new Tesi);
+			}
+			x=sedutaDao.getAll(getInstance());
+			while(x.next()){
+			//	sedute.add(new Seduta);
+			}
+		} catch (SQLException e) {
+			throw new InconsistencyException("Fallimento nella presa del db dei dati, impossibile inizializzare localmente");
+		}
 	}
 
 	public Utente login(String email, String password, boolean isDocente)throws InconsistencyException{
@@ -200,10 +230,10 @@ public class Controller {
         return false;
 	}
 	//MAY BE NULL
-	public Tirocinio cercaTirocinio (String nome,LocalDate data)throws InconsistencyException{
+	public Tirocinio cercaTirocinio (String nome,LocalDate data,Docente docente)throws InconsistencyException{
 		Tirocinio tirocinio = null;
 		for(Tirocinio x:tirocini){
-			if(x.getNome().equals(nome) && x.getData().equals(data))
+			if(x.getNome().equals(nome) && x.getData().equals(data) && x.getRelatore().isSameDocente(docente))
 				tirocinio = x;
 		}
 		try{
@@ -221,6 +251,28 @@ public class Controller {
 			handleSQLException(e);
 		}
 		return tirocinio;
+	}
+	//MAY BE NULL
+	public Studente cercaStudente (String login)throws InconsistencyException{
+		Studente s = null;
+		for(Studente x:studenti){
+			if(x.getLogin().equals(login)){
+				s=x;
+			}
+		}
+		try{
+			ResultSet x=docenteDao.queryViaUtente("SELECT TOP 1 FROM Studente WHERE login = '"+login+"';",getInstance());
+			if(x.next()) {
+				if (s == null)
+					throw new InconsistencyException("Docente presente nel db e non in locale");
+			}
+			else if (s!=null)
+				throw new InconsistencyException("Docente presente in locale e non nel db");
+		}
+		catch (SQLException e){
+			handleSQLException(e);
+		}
+		return s;
 	}
 	//MAY BE NULL
 	public Docente cercaDocente (String login)throws InconsistencyException{

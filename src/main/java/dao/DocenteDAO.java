@@ -18,5 +18,4 @@ public interface DocenteDAO extends UtenteDAO{
     public Boolean setCoordinatore(boolean x, String docente, boolean coordinatore, ConnessioneDatabase conn) ;
     public ResultSet getAllTirocinio(String docente, ConnessioneDatabase conn) ;
     public ResultSet getAllSeduta(String docente, ConnessioneDatabase conn) ;
-    public ResultSet getAllDocente(ConnessioneDatabase conn) ;
 }

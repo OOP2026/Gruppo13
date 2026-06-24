@@ -1,6 +1,6 @@
 package dao;
 import database_connection.ConnessioneDatabase;
-public interface UtenteDAO {
+public interface UtenteDAO extends DBGetter{
     public Boolean setPassword(String username, String password, ConnessioneDatabase conn) ;
     public Boolean setUsername(String oldusername, String newusername, ConnessioneDatabase conn) ;
     public Boolean login(String email, String password, ConnessioneDatabase conn) ;

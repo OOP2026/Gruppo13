@@ -30,9 +30,9 @@ public class TirocinioImplementazionePostgres implements TirocinioDAO {
         }
         return null;
     }
-    public ResultSet getAllTirocinio(ConnessioneDatabase conn) {
+    public ResultSet getAll(ConnessioneDatabase conn) {
         try{
-            return conn.executeQuery("SELECT * FROM Tirocinio");
+            return conn.executeQuery("SELECT * FROM Tirocinio WHERE Id_Ti NOT IN (SELECT ID_Ti from TirocinioEsterno)");
         }
         catch(SQLException e) {
             handleSQLException(e);

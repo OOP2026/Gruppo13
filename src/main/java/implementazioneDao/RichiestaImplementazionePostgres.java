@@ -43,9 +43,9 @@ public class RichiestaImplementazionePostgres implements RichiestaDAO {
 
         return null;
     }
-    public ResultSet getAllRichiesta(ConnessioneDatabase conn) {
+    public ResultSet getAll(ConnessioneDatabase conn) {
         try{
-            return conn.executeQuery("SELECT * FROM Richiesta");
+            return conn.executeQuery("SELECT * FROM Richiesta r JOIN Tirocinio T on r.IDTi = t.IDTi");
         }
         catch(SQLException e) {
             handleSQLException(e);

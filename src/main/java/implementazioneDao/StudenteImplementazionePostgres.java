@@ -196,7 +196,7 @@ public class StudenteImplementazionePostgres extends UtenteImplenentazionePostgr
         
         return null;
     }
-    public ResultSet getAllStudente(ConnessioneDatabase conn) {
+    public ResultSet getAll(ConnessioneDatabase conn) {
         try{
             return conn.executeQuery("SELECT * FROM Studente");
         }

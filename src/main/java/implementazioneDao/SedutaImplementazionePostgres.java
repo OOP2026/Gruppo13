@@ -44,7 +44,7 @@ public class SedutaImplementazionePostgres implements SedutaDAO {
         return -2;
     }
 
-    public ResultSet getAllSeduta(ConnessioneDatabase conn) {
+    public ResultSet getAll(ConnessioneDatabase conn) {
         try{
             return conn.executeQuery("SELECT * FROM Seduta");
         }
