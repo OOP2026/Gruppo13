@@ -25,35 +25,36 @@ public class Controller {
 	TirocinioImplementazionePostgres tirocinioDao = new TirocinioImplementazionePostgres();
 	TirocinioEsternoImplementazionePostgres tirocinioEsternoDao = new TirocinioEsternoImplementazionePostgres();
 	SedutaImplementazionePostgres sedutaDao = new SedutaImplementazionePostgres();
+	String login="login";
 	public Controller() throws InconsistencyException {
 		try {
 			ResultSet x = studenteDao.getAll(getInstance());
 			while(x.next()){
-				studenti.add(new Studente(x.getString("nome"),x.getString("cognome"),x.getString("password"),x.getString("login"),x.getString("email"),x.getString("matricola")));
+				studenti.add(new Studente(x.getString("nome"),x.getString("cognome"),x.getString("password"),x.getString(login),x.getString("email"),x.getString("matricola")));
 			}
 			x.close();
 			getInstance().closeStatement();
 			x=docenteDao.getAll(getInstance());
 			while(x.next()){
-				docenti.add(new Docente(x.getString("nome"),x.getString("cognome"),x.getString("password"),x.getString("login"),x.getString("email"),x.getBoolean("coordinatore")));
+				docenti.add(new Docente(x.getString("nome"),x.getString("cognome"),x.getString("password"),x.getString(login),x.getString("email"),x.getBoolean("coordinatore")));
 			}
 			x.close();
 			getInstance().closeStatement();
 			x=tirocinioDao.getAll(getInstance());
 			while(x.next()){
-				tirocini.add(new TirocinioInterno(x.getString("nome"),x.getString("descrizione"),cercaDocente(x.getString("login")),x.getDate("Data").toLocalDate()));
+				tirocini.add(new TirocinioInterno(x.getString("nome"),x.getString("descrizione"),cercaDocente(x.getString(login)),x.getDate("Data").toLocalDate()));
 			}
 			x.close();
 			getInstance().closeStatement();
 			x=tirocinioEsternoDao.getAll(getInstance());
 			while(x.next()){
-				tirocini.add(new TirocinioEsterno(x.getString("nome"),x.getString("descrizione"),cercaDocente(x.getString("login")),x.getDate("Data").toLocalDate(),x.getString("nomeazienda"),x.getString("referente")));
+				tirocini.add(new TirocinioEsterno(x.getString("nome"),x.getString("descrizione"),cercaDocente(x.getString(login)),x.getDate("Data").toLocalDate(),x.getString("nomeazienda"),x.getString("referente")));
 			}
 			x.close();
 			getInstance().closeStatement();
 			x=richiestaDao.getAll(getInstance());
 			while(x.next()){
-				Richiesta r = new Richiesta(x.getDate(2).toLocalDate(),cercaStudente(x.getString("login")),cercaTirocinio(x.getString("nome"),x.getDate(9).toLocalDate(),cercaDocente(x.getString("login"))));
+				Richiesta r = new Richiesta(x.getDate(2).toLocalDate(),cercaStudente(x.getString(login)),cercaTirocinio(x.getString("nome"),x.getDate(9).toLocalDate(),cercaDocente(x.getString(login))));
 				richieste.add(r);
 			}
 			x.close();
@@ -90,9 +91,9 @@ public class Controller {
 		}
 		if (log==null)
 			try {
-				if(isDocente&&!docenteDao.login(login,password, getInstance()))
+				if(isDocente&&Boolean.TRUE.equals(!docenteDao.login(login,password, getInstance())))
 					throw new InconsistencyException("Docente trovato in locale e non in db");
-				else if(!isDocente&&!studenteDao.login(login,password, getInstance()))
+				else if(!isDocente&&Boolean.TRUE.equals(!studenteDao.login(login,password, getInstance())))
 					throw new InconsistencyException("Studente trovato in locale e non in db");
 			}
 			catch (SQLException e) {
@@ -139,7 +140,7 @@ public class Controller {
 	public boolean nuovoTirocinioEsterno(Docente docente,String nome, String descrizione,LocalDate data,String nomeAzienda,String referente){
 		Tirocinio x=docente.aggiungiTirocinio(nome,descrizione,data,nomeAzienda,referente);
 		try {
-			if (docenteDao.aggiungiTirocinio(docente.getLogin(),nome, descrizione, data,nomeAzienda,referente, getInstance()))
+			if (Boolean.TRUE.equals(docenteDao.aggiungiTirocinio(docente.getLogin(),nome, descrizione, data,nomeAzienda,referente, getInstance())))
 				tirocini.add(x);
 		}
 		catch (SQLException e){
@@ -151,20 +152,22 @@ public class Controller {
 	public boolean nuovoTirocinioInterno(Docente docente,String nome, String descrizione,LocalDate data) {
 		Tirocinio t=docente.aggiungiTirocinio(nome,descrizione,data);
 		try {
-			if(docenteDao.aggiungiTirocinio(docente.getLogin(),nome,descrizione,data, getInstance()))
+			if(Boolean.TRUE.equals(docenteDao.aggiungiTirocinio(docente.getLogin(),nome,descrizione,data, getInstance()))) {
 				tirocini.add(t);
+				return true;
+			}
 		} catch (SQLException e) {
 			handleSQLException(e);
 		} catch (NullPointerException ex){
 			handleNullPointerException(ex);
 		}
-		return true;
+		return false;
 	}
 
 	public boolean faiRichiesta(Studente studente,Tirocinio tirocinio){
 		try {
 			Richiesta r = studente.faiRichiesta(LocalDate.now(ZoneId.systemDefault()), tirocinio);
-			if (studenteDao.aggiungiRichiesta(studente.getMatricola(), tirocinio.getNome(), tirocinio.getData(), tirocinio.getRelatore().getLogin(), getInstance())){
+			if (Boolean.TRUE.equals(studenteDao.aggiungiRichiesta(studente.getMatricola(), tirocinio.getNome(), tirocinio.getData(), tirocinio.getRelatore().getLogin(), getInstance()))){
 				richieste.add(r);
 				return true;
 			}
@@ -191,11 +194,11 @@ public class Controller {
 	public boolean modificaStatoRichiesta(Docente docente,Richiesta richiesta,boolean ok){
 			try {
 				if (ok) {
-					if (docenteDao.accettaRichiesta(richiesta.getStudente().getLogin(), richiesta.getTirocinio().getNome(), richiesta.getTirocinio().getData(), docente.getLogin(), getInstance()))
+					if (Boolean.TRUE.equals(docenteDao.accettaRichiesta(richiesta.getStudente().getLogin(), richiesta.getTirocinio().getNome(), richiesta.getTirocinio().getData(), docente.getLogin(), getInstance())))
 						return docente.accettaRichiesta(richiesta);
 					else return false;
 				} else {
-					if (docenteDao.rifiutaRichiesta(richiesta.getStudente().getLogin(), richiesta.getTirocinio().getNome(), richiesta.getTirocinio().getData(), docente.getLogin(), getInstance()))
+					if (Boolean.TRUE.equals(docenteDao.rifiutaRichiesta(richiesta.getStudente().getLogin(), richiesta.getTirocinio().getNome(), richiesta.getTirocinio().getData(), docente.getLogin(), getInstance())))
 						return docente.rifiutaRichiesta(richiesta);
 				}
 			}
@@ -213,11 +216,11 @@ public class Controller {
 	public boolean modificaStatoTesi(Docente docente,Tesi t,boolean ok){
 		try{
 			if(ok){
-				if (docenteDao.accettaTesi(t.getRichiesta().getStudente().getLogin(),t.getRichiesta().getTirocinio().getNome(),t.getRichiesta().getTirocinio().getData(),t.getRichiesta().getTirocinio().getRelatore().getLogin(), getInstance()))
+				if (Boolean.TRUE.equals(docenteDao.accettaTesi(t.getRichiesta().getStudente().getLogin(),t.getRichiesta().getTirocinio().getNome(),t.getRichiesta().getTirocinio().getData(),t.getRichiesta().getTirocinio().getRelatore().getLogin(), getInstance())))
 					return docente.accettaTesi(t);
 			}
 			else {
-				if(docenteDao.rifiutaRichiesta(t.getRichiesta().getStudente().getLogin(),t.getRichiesta().getTirocinio().getNome(),t.getRichiesta().getTirocinio().getData(),t.getRichiesta().getTirocinio().getRelatore().getLogin(), getInstance()))
+				if(Boolean.TRUE.equals(docenteDao.rifiutaRichiesta(t.getRichiesta().getStudente().getLogin(),t.getRichiesta().getTirocinio().getNome(),t.getRichiesta().getTirocinio().getData(),t.getRichiesta().getTirocinio().getRelatore().getLogin(), getInstance())))
 					return docente.rifiutaTesi(t);
 			}
 		} catch(SQLException e){
@@ -391,7 +394,7 @@ public class Controller {
 
 	public boolean modificaTesi(Studente studente,Tesi tesi,String contenuto){
 		try {
-			if (studenteDao.aggiornaTesi(studente.getMatricola(), contenuto, tesi.getRichiesta().getTirocinio().getNome(), tesi.getRichiesta().getTirocinio().getData(), tesi.getRichiesta().getTirocinio().getRelatore().getLogin(),getInstance()))
+			if (Boolean.TRUE.equals(studenteDao.aggiornaTesi(studente.getMatricola(), contenuto, tesi.getRichiesta().getTirocinio().getNome(), tesi.getRichiesta().getTirocinio().getData(), tesi.getRichiesta().getTirocinio().getRelatore().getLogin(),getInstance())))
 				return studente.aggiornaTesi(tesi, contenuto);
 		}
 		catch (SQLException e){
@@ -404,7 +407,7 @@ public class Controller {
 		try {
 			if (r.getStudente().equals(studente)){
 				Tesi x=studente.aggiungiTesi(r,contenuto);
-				if(studenteDao.aggiungiTesi(studente.getMatricola(),contenuto,r.getTirocinio().getNome(),r.getTirocinio().getData(),r.getTirocinio().getRelatore().getLogin(),getInstance())) {
+				if(Boolean.TRUE.equals(studenteDao.aggiungiTesi(studente.getMatricola(),contenuto,r.getTirocinio().getNome(),r.getTirocinio().getData(),r.getTirocinio().getRelatore().getLogin(),getInstance()))) {
 					tesi.add(x);
 					return true;
 				}
@@ -427,7 +430,7 @@ public class Controller {
 
 	public boolean aggiungiSeduta(Docente d,LocalDate data,LocalTime ora) throws NullPointerException{
 		try{
-			if(docenteDao.aggiungiSedutaDiLaurea(data,ora,d.getLogin(),getInstance())) {
+			if(Boolean.TRUE.equals(docenteDao.aggiungiSedutaDiLaurea(data,ora,d.getLogin(),getInstance()))) {
 				sedute.add(d.aggiungiSedutaDiLaurea(data,ora));
 				return true;
 			}
@@ -490,7 +493,7 @@ public class Controller {
 	}
 	public Boolean prenotaSedutaDiLaurea(Studente st,Seduta se,Tesi t){
 		try{
-			if(studenteDao.prenotaSedutaDiLaurea(st.getMatricola(),se.getData(),t.getRichiesta().getTirocinio().getNome(),t.getRichiesta().getTirocinio().getData(),t.getRichiesta().getTirocinio().getRelatore().getLogin(),getInstance()))
+			if(Boolean.TRUE.equals(studenteDao.prenotaSedutaDiLaurea(st.getMatricola(),se.getData(),t.getRichiesta().getTirocinio().getNome(),t.getRichiesta().getTirocinio().getData(),t.getRichiesta().getTirocinio().getRelatore().getLogin(),getInstance())))
 				return st.prenotaSedutadiLaurea(se,t);
 		}
 		catch(SQLException e){
@@ -500,7 +503,7 @@ public class Controller {
 	}
 	public Boolean inserisciVotoSedutaDiLaurea(Docente d,Seduta s,int voto){
 		try{
-			if(docenteDao.aggiungiVotoSedutaDiLaurea(voto,s.getData(),s.getOra(),s.getDocente().getLogin(),getInstance()))
+			if(Boolean.TRUE.equals(docenteDao.aggiungiVotoSedutaDiLaurea(voto,s.getData(),s.getOra(),s.getDocente().getLogin(),getInstance())))
 				return d.aggiungiVotoSedutaDiLaurea(s,voto);
 		}
 		catch (SQLException e){

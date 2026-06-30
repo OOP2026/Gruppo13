@@ -44,11 +44,12 @@ public class SecondHomework {
     }
 
     public SecondHomework() {
+        String back="Indietro";
         try {
             controller = new Controller();
-        } catch (InconsistencyException e) {
+        }
+        catch (InconsistencyException e) {
             handleInconsistencyException(e);
-            System.exit(-1);
         }
         // Bottone Docente
         docenteBtn.addActionListener(e -> {
@@ -65,7 +66,7 @@ public class SecondHomework {
 
             JFrame docenteFrame = new JFrame("Finestra Docente");
             docenteFrame.setSize(1000, 200);
-            docenteFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            docenteFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             try {
                 docente=(Docente)controller.login(login,password,true);
                 if(docente!=null){
@@ -94,19 +95,53 @@ public class SecondHomework {
                         }
                         tirociniTextArea.setText(t.toString());
                         tirociniPanel.add(new JScrollPane(tirociniTextArea));
-                        docenteFrame.setContentPane(tirociniPanel);
-                        docenteFrame.setVisible(true);
-                        JButton btnIndietro = new JButton("Indietro");
+                        JButton btnIndietro = new JButton(back);
                         btnIndietro.addActionListener(e2 -> {
-                            docenteFrame.setVisible(false);
                             docenteFrame.remove(tirociniPanel);
-                            docenteFrame.setContentPane(panel);
+                            docenteFrame.setContentPane(p);
                             docenteFrame.setVisible(true);
                         });
                         tirociniPanel.add(btnIndietro);
+                        docenteFrame.setContentPane(tirociniPanel);
+                        docenteFrame.setVisible(true);
+                    });
+                    JButton btnNewTirocinio = new JButton("Inserisci tirocinio(interno)");
+                    btnNewTirocinio.addActionListener(e3->{
+                        JPanel tirociniPanel = new JPanel();
+                        tirociniPanel.add(new JLabel("Inserisci tirocinio(interno)"));
+                        //ADD ROBA
+                        JButton btnIndietro = new JButton(back);
+                        btnIndietro.addActionListener(e2 -> {
+                            docenteFrame.remove(tirociniPanel);
+                            docenteFrame.setContentPane(p);
+                            docenteFrame.setVisible(true);
+                        });
+                        tirociniPanel.add(btnIndietro);
+                        docenteFrame.setContentPane(tirociniPanel);
+                        docenteFrame.setVisible(true);
+
+                    });
+                    JButton btnNewTirocinioEsterno = new JButton("Inserisci tirocinio(esterno)");
+                    btnNewTirocinioEsterno.addActionListener(e3->{
+                        System.out.println("premuto tirocinioesterno");
+                        JPanel tirociniPanel = new JPanel();
+                        tirociniPanel.add(new JLabel("Inserisci tirocinio(esterno)"));
+                        //ADD ROBA
+                        JButton btnIndietro = new JButton(back);
+                        btnIndietro.addActionListener(e2 -> {
+                            docenteFrame.remove(tirociniPanel);
+                            docenteFrame.setContentPane(p);
+                            docenteFrame.setVisible(true);
+                        });
+                        tirociniPanel.add(btnIndietro);
+                        docenteFrame.setContentPane(tirociniPanel);
+                        docenteFrame.setVisible(true);
+
                     });
                     p.add(btnLogout);
                     p.add(btnAllTirocinio);
+                    p.add(btnNewTirocinio);
+                    p.add(btnNewTirocinioEsterno);
                     docenteFrame.setContentPane(p);
                     docenteFrame.setVisible(true);
                     for (Component x : getComponents(panel)) {
@@ -141,7 +176,7 @@ public class SecondHomework {
 
             JFrame studenteFrame = new JFrame("Finestra Studente");
             studenteFrame.setSize(300, 200);
-            studenteFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            studenteFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
             JPanel p = new JPanel();
             p.add(new JLabel("Benvenuto Studente"));
@@ -155,7 +190,7 @@ public class SecondHomework {
 
         JFrame loginPage = new JFrame("Login Page");
         loginPage.setContentPane(new SecondHomework().panel);
-        loginPage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        loginPage.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         loginPage.pack();
         loginPage.setVisible(true);
     }
