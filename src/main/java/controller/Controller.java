@@ -31,53 +31,68 @@ public class Controller {
 			while(x.next()){
 				studenti.add(new Studente(x.getString("nome"),x.getString("cognome"),x.getString("password"),x.getString("login"),x.getString("email"),x.getString("matricola")));
 			}
+			x.close();
+			getInstance().closeStatement();
 			x=docenteDao.getAll(getInstance());
 			while(x.next()){
 				docenti.add(new Docente(x.getString("nome"),x.getString("cognome"),x.getString("password"),x.getString("login"),x.getString("email"),x.getBoolean("coordinatore")));
 			}
+			x.close();
+			getInstance().closeStatement();
 			x=tirocinioDao.getAll(getInstance());
 			while(x.next()){
 				tirocini.add(new TirocinioInterno(x.getString("nome"),x.getString("descrizione"),cercaDocente(x.getString("login")),x.getDate("Data").toLocalDate()));
 			}
+			x.close();
+			getInstance().closeStatement();
 			x=tirocinioEsternoDao.getAll(getInstance());
 			while(x.next()){
 				tirocini.add(new TirocinioEsterno(x.getString("nome"),x.getString("descrizione"),cercaDocente(x.getString("login")),x.getDate("Data").toLocalDate(),x.getString("nomeazienda"),x.getString("referente")));
 			}
+			x.close();
+			getInstance().closeStatement();
 			x=richiestaDao.getAll(getInstance());
 			while(x.next()){
-				Richiesta r = new Richiesta(x.getDate("r.data").toLocalDate(),cercaStudente(x.getString("login")),cercaTirocinio(x.getString("t.nome"),x.getDate("t.data").toLocalDate(),cercaDocente(x.getString("t.login"))));
+				Richiesta r = new Richiesta(x.getDate(2).toLocalDate(),cercaStudente(x.getString("login")),cercaTirocinio(x.getString("nome"),x.getDate(9).toLocalDate(),cercaDocente(x.getString("login"))));
 				richieste.add(r);
 			}
+			x.close();
+			getInstance().closeStatement();
 			x=tesiDao.getAll(getInstance());
 			while(x.next()){
-				tesi.add(new Tesi(x.getString("contenuto"),cercaRichiesta(cercaStudente(x.getString("login")),cercaTirocinio(x.getString("t.nome"),x.getDate("t.data").toLocalDate(),cercaDocente(x.getString("t.login"))))));
+				tesi.add(new Tesi(x.getString("contenuto"),cercaRichiesta(cercaStudente(x.getString(8)),cercaTirocinio(x.getString(12),x.getDate(13).toLocalDate(),cercaDocente(x.getString(14))))));
 			}
+			x.close();
+			getInstance().closeStatement();
 			x=sedutaDao.getAll(getInstance());
 			while(x.next()){
-				sedute.add(new Seduta(x.getDate("se.data").toLocalDate(),x.getTime("ora").toLocalTime(),x.getInt("voto"),cercaTesi(cercaRichiesta(cercaStudente(x.getString("r.login")),cercaTirocinio(x.getString("ti.nome"),x.getDate("ti.data").toLocalDate(),cercaDocente(x.getString("ti.login"))))),cercaDocente(x.getString("te.login"))));
+				sedute.add(new Seduta(x.getDate(2).toLocalDate(),x.getTime(3).toLocalTime(),x.getInt("votofinale"),cercaTesi(cercaRichiesta(cercaStudente(x.getString(14)),cercaTirocinio(x.getString(18),x.getDate(19).toLocalDate(),cercaDocente(x.getString(20))))),cercaDocente(x.getString(6))));
 			}
+			x.close();
+			getInstance().closeStatement();
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new InconsistencyException("Fallimento nella presa del db dei dati, impossibile inizializzare localmente");
 		}
 	}
 
-	public Utente login(String email, String password, boolean isDocente)throws InconsistencyException{
+	public Utente login(String login, String password, boolean isDocente)throws InconsistencyException{
 		Utente log=null;
 		if(isDocente){
 			for(Docente x:docenti){
-				log=x.logIn(email, password);
+				log=x.logIn(login, password);
 			}
 		}
 		else{
 			for (Studente x : studenti) {
-				log = x.logIn(email, password);
+				log = x.logIn(login, password);
 			}
 		}
 		if (log==null)
 			try {
-				if(isDocente&&!docenteDao.login(email,password, getInstance()))
+				if(isDocente&&!docenteDao.login(login,password, getInstance()))
 					throw new InconsistencyException("Docente trovato in locale e non in db");
-				else if(!isDocente&&!studenteDao.login(email,password, getInstance()))
+				else if(!isDocente&&!studenteDao.login(login,password, getInstance()))
 					throw new InconsistencyException("Studente trovato in locale e non in db");
 			}
 			catch (SQLException e) {
@@ -85,23 +100,22 @@ public class Controller {
 			}
 		return log;
 	}
-	public void logout(Utente u,boolean isDocente)throws InconsistencyException{
-			try{
-				boolean x;
-				u.logOut();
-				if(isDocente)
-					x=docenteDao.logout(u.getLogin(), getInstance());
-				else
-					x=studenteDao.logout(u.getLogin(), getInstance());
-				if(!x)
-					throw new InconsistencyException("Docente logout in locale ma non in db");
-			}
-			catch(NullPointerException e){
-				System.out.println("Problema nell'esecuzione\n");
-			}
-			catch (SQLException e) {
-				handleSQLException(e);
-			}
+	public boolean logout(Utente u, boolean isDocente)throws InconsistencyException {
+		boolean x = false;
+		try {
+			u.logOut();
+			if (isDocente)
+				x = docenteDao.logout(u.getLogin(), getInstance());
+			else
+				x = studenteDao.logout(u.getLogin(), getInstance());
+			if (!x)
+				throw new InconsistencyException("Docente logout in locale ma non in db");
+		} catch (NullPointerException e) {
+			System.out.println("Problema nell'esecuzione\n");
+		} catch (SQLException e) {
+			handleSQLException(e);
+		}
+		return x;
 	}
 
 	public String vediTirocini(Utente user, boolean isDocente){
@@ -115,7 +129,7 @@ public class Controller {
 	public List<Tirocinio> getTirocini(Utente user,boolean isDocente){
 		ArrayList<Tirocinio> t=new ArrayList<>();
 		for(Tirocinio x:tirocini){
-			if(!isDocente||x.getRelatore().equals(user))
+			if(isDocente||x.getRelatore().equals(user))
 				t.add(x);
 		}
 		return t;
@@ -239,7 +253,7 @@ public class Controller {
 				tirocinio = x;
 		}
 		try{
-			ResultSet x=tirocinioDao.queryViaTirocinio("SELECT TOP 1 FROM Tirocinio Where Nome='"+nome+"' AND Data='"+data+"';",getInstance());
+			ResultSet x=tirocinioDao.queryViaTirocinio("SELECT * FROM Tirocinio Where Nome='"+nome+"' AND Data='"+data+"';",getInstance());
 			if(x.next()) {
 				if (tirocinio != null)
 					return tirocinio;
@@ -263,7 +277,7 @@ public class Controller {
 			}
 		}
 		try{
-			ResultSet x=docenteDao.queryViaUtente("SELECT TOP 1 FROM Studente WHERE login = '"+login+"';",getInstance());
+			ResultSet x=docenteDao.queryViaUtente("SELECT * FROM Studente WHERE login = '"+login+"';",getInstance());
 			if(x.next()) {
 				if (s == null)
 					throw new InconsistencyException("Docente presente nel db e non in locale");
@@ -285,7 +299,7 @@ public class Controller {
 			}
 		}
 		try{
-			ResultSet x=docenteDao.queryViaUtente("SELECT TOP 1 FROM Docente WHERE login = '"+login+"';",getInstance());
+			ResultSet x=docenteDao.queryViaUtente("SELECT *FROM Docente WHERE login = '"+login+"';",getInstance());
 			if(x.next()) {
 				if (docente != null)
 					return docente;
@@ -309,7 +323,7 @@ public class Controller {
 
 		}
 		try{
-			ResultSet x =richiestaDao.queryViaRichiesta("SELECT TOP 1 FROM Richiesta WHERE Login='"+studente.getLogin()+"' AND ID_Ti =(SELECT ID_Ti FROM Tirocinio WHERE Nome = '"+tirocinio.getNome()+"' AND Data = '"+tirocinio.getData()+"' AND Login = '"+tirocinio.getRelatore().getLogin()+"');",getInstance());
+			ResultSet x =richiestaDao.queryViaRichiesta("SELECT * FROM Richiesta WHERE Login='"+studente.getLogin()+"' AND ID_Ti =(SELECT ID_Ti FROM Tirocinio WHERE Nome = '"+tirocinio.getNome()+"' AND Data = '"+tirocinio.getData()+"' AND Login = '"+tirocinio.getRelatore().getLogin()+"');",getInstance());
 			if(x.next()){
 				if(richiesta!=null)
 					return richiesta;
@@ -332,7 +346,7 @@ public class Controller {
 				t= x;
 		}
 		try{
-			ResultSet x=tesiDao.queryViaTesi("SELECT TOP 1 FROM Tesi WHERE ID_Ri=(SELECT ID_Ri FROM Richiesta WHERE Login='"+richiesta.getStudente().getLogin()+"' AND ID_Ti = (Select ID_Ti FROM Tirocinio WHERE Nome = '"+richiesta.getTirocinio().getNome()+"' AND Data = '"+richiesta.getTirocinio().getData()+"' AND Login = '"+richiesta.getTirocinio().getRelatore().getLogin()+"'));",getInstance());
+			ResultSet x=tesiDao.queryViaTesi("SELECT * FROM Tesi WHERE ID_Ri=(SELECT ID_Ri FROM Richiesta WHERE Login='"+richiesta.getStudente().getLogin()+"' AND ID_Ti = (Select ID_Ti FROM Tirocinio WHERE Nome = '"+richiesta.getTirocinio().getNome()+"' AND Data = '"+richiesta.getTirocinio().getData()+"' AND Login = '"+richiesta.getTirocinio().getRelatore().getLogin()+"'));",getInstance());
 			if(x.next()){
 				if (t!=null)
 					return t;

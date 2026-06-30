@@ -31,8 +31,8 @@ public abstract class Utente {
         }
     }
 
-    public Utente logIn(String email, String password) {
-        if (email.equals(this.email) && password.equals(this.password)) {
+    public Utente logIn(String login, String password) {
+        if (login.equals(this.login) && password.equals(this.password)) {
             loggedin = true;
             System.out.println("Sei loggato");
             return this;

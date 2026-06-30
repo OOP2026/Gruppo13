@@ -158,7 +158,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
     }
     public Boolean login(String username, String password, ConnessioneDatabase conn) {
         try{
-            conn.executeQuery("UPDATE Docente set Stato = TRUE WHERE Docente.Login = '"+username+"' AND Password = '"+password+"'").close();
+            conn.executeUpdate("UPDATE Docente set Stato = TRUE WHERE Docente.Login = '"+username+"' AND Password = '"+password+"'");
             return true;
         }
         catch(SQLException e) {
@@ -169,7 +169,7 @@ public class DocenteImplementazionePostgres extends UtenteImplenentazionePostgre
     public Boolean logout(String username, ConnessioneDatabase conn) {
 
         try{
-            conn.executeQuery("UPDATE Docente set Stato = FALSE WHERE Docente.Login = '"+username+"'").close();
+            conn.executeUpdate("UPDATE Docente set Stato = FALSE WHERE Docente.Login = '"+username+"'");
             return true;
         }
         catch(SQLException e){
