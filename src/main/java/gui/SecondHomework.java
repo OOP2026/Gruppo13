@@ -1,5 +1,7 @@
 package gui;
 
+import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 import controller.Controller;
 import model.Docente;
 import model.Studente;
@@ -9,6 +11,8 @@ import utilities.InconsistencyException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -107,9 +111,26 @@ public class SecondHomework {
                     });
                     JButton btnNewTirocinio = new JButton("Inserisci tirocinio(interno)");
                     btnNewTirocinio.addActionListener(e3->{
+                        JLabel Stato=new JLabel("Stato inserimento..");
                         JPanel tirociniPanel = new JPanel();
                         tirociniPanel.add(new JLabel("Inserisci tirocinio(interno)"));
-                        //ADD ROBA
+                        JTextField nomeTextField = new JTextField(62);
+                        tirociniPanel.add(new JLabel("Nome"));
+                        tirociniPanel.add(nomeTextField);
+                        JTextField descrizioneTextField = new JTextField(253);
+                        tirociniPanel.add(new JLabel("Descrizione"));
+                        tirociniPanel.add(descrizioneTextField);
+                        JDateChooser dataChooser = new JDateChooser();
+                        tirociniPanel.add(new JLabel("Data"));
+                        tirociniPanel.add(dataChooser);
+                        tirociniPanel.add(Stato);
+                        JButton btnInserisci = new JButton("Inserisci");
+                        btnInserisci.addActionListener(e5->{
+                            if(controller.nuovoTirocinioInterno(docente, nomeTextField.getText(), descrizioneTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault())))
+                                Stato.setText("Inserito correttamente");
+                            else
+                                Stato.setText("Non inserito correttamente");
+                        });
                         JButton btnIndietro = new JButton(back);
                         btnIndietro.addActionListener(e2 -> {
                             docenteFrame.remove(tirociniPanel);
