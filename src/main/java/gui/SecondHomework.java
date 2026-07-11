@@ -1,11 +1,11 @@
 package gui;
 
 import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
 import controller.Controller;
 import model.Docente;
 import model.Studente;
 import model.Tirocinio;
+import model.Utente;
 import utilities.InconsistencyException;
 
 import javax.swing.*;
@@ -25,8 +25,7 @@ public class SecondHomework {
     private JPasswordField passwordField;
     private JButton docenteBtn;
     private JButton studenteBtn;
-    private Docente docente;
-    private Studente studente;
+    private Utente utente;
     // Source - https://stackoverflow.com/a/16782219
 // Posted by Joel Christophel, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-06-30, License - CC BY-SA 3.0
@@ -72,14 +71,14 @@ public class SecondHomework {
             docenteFrame.setSize(1000, 200);
             docenteFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             try {
-                docente=(Docente)controller.login(login,password,true);
-                if(docente!=null){
+                utente=controller.login(login,password,true);
+                if(utente!=null){
                     JPanel p = new JPanel();
                     p.add(new JLabel("Benvenuto, "+login));
                     JButton btnLogout = new JButton("Logout");
                     btnLogout.addActionListener(e2 -> {
                         try{
-                            controller.logout(docente,true);
+                            controller.logout(utente,true);
                         } catch (InconsistencyException ex) {
                             handleInconsistencyException(ex);
                         }
@@ -94,7 +93,7 @@ public class SecondHomework {
                         tirociniTextArea.setEditable(false);
                         tirociniTextArea.setLineWrap(true);
                         StringBuilder t=new StringBuilder();
-                        for(Tirocinio x : controller.getTirocini(docente,true)){
+                        for(Tirocinio x : controller.getTirocini(utente,true)){
                                 t.append(x.toString());
                         }
                         tirociniTextArea.setText(t.toString());
@@ -111,25 +110,29 @@ public class SecondHomework {
                     });
                     JButton btnNewTirocinio = new JButton("Inserisci tirocinio(interno)");
                     btnNewTirocinio.addActionListener(e3->{
-                        JLabel Stato=new JLabel("Stato inserimento..");
+                        JLabel stato=new JLabel("Stato inserimento..");
                         JPanel tirociniPanel = new JPanel();
-                        tirociniPanel.add(new JLabel("Inserisci tirocinio(interno)"));
-                        JTextField nomeTextField = new JTextField(62);
                         tirociniPanel.add(new JLabel("Nome"));
+                        JTextField nomeTextField = new JTextField(62);
                         tirociniPanel.add(nomeTextField);
-                        JTextField descrizioneTextField = new JTextField(253);
+                        JTextArea descrizioneTextField = new JTextArea(4,63);
                         tirociniPanel.add(new JLabel("Descrizione"));
                         tirociniPanel.add(descrizioneTextField);
                         JDateChooser dataChooser = new JDateChooser();
                         tirociniPanel.add(new JLabel("Data"));
                         tirociniPanel.add(dataChooser);
-                        tirociniPanel.add(Stato);
                         JButton btnInserisci = new JButton("Inserisci");
                         btnInserisci.addActionListener(e5->{
-                            if(controller.nuovoTirocinioInterno(docente, nomeTextField.getText(), descrizioneTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault())))
-                                Stato.setText("Inserito correttamente");
-                            else
-                                Stato.setText("Non inserito correttamente");
+                            try{
+                                if(controller.nuovoTirocinioInterno((Docente)utente, nomeTextField.getText(), descrizioneTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault())))
+                                   stato.setText("Inserito correttamente");
+                                else
+                                   stato.setText("Non inserito correttamente");
+                            }
+                            catch(NullPointerException ex){
+                                stato.setText("Inserimento vuoto, non inserito correttamente");
+                                handleNullPointerException(ex);
+                            }
                         });
                         JButton btnIndietro = new JButton(back);
                         btnIndietro.addActionListener(e2 -> {
@@ -137,24 +140,54 @@ public class SecondHomework {
                             docenteFrame.setContentPane(p);
                             docenteFrame.setVisible(true);
                         });
+                        tirociniPanel.add(btnInserisci);
                         tirociniPanel.add(btnIndietro);
+                        tirociniPanel.add(stato);
                         docenteFrame.setContentPane(tirociniPanel);
                         docenteFrame.setVisible(true);
 
                     });
                     JButton btnNewTirocinioEsterno = new JButton("Inserisci tirocinio(esterno)");
                     btnNewTirocinioEsterno.addActionListener(e3->{
-                        System.out.println("premuto tirocinioesterno");
                         JPanel tirociniPanel = new JPanel();
-                        tirociniPanel.add(new JLabel("Inserisci tirocinio(esterno)"));
-                        //ADD ROBA
+                        JLabel stato=new JLabel("Stato inserimento..");
+                        tirociniPanel.add(new JLabel("Nome"));
+                        JTextField nomeTextField = new JTextField(62);
+                        tirociniPanel.add(nomeTextField);
+                        tirociniPanel.add(new JLabel("Referente"));
+                        JTextField referenteTextField = new JTextField(62);
+                        tirociniPanel.add(referenteTextField);
+                        tirociniPanel.add(new JLabel("Nome Azienda"));
+                        JTextField nomeAziendaTextField = new JTextField(62);
+                        tirociniPanel.add(nomeAziendaTextField);
+                        JTextArea descrizioneTextField = new JTextArea(4,63);
+                        tirociniPanel.add(new JLabel("Descrizione"));
+                        tirociniPanel.add(descrizioneTextField);
+                        JDateChooser dataChooser = new JDateChooser();
+                        tirociniPanel.add(new JLabel("Data"));
+                        tirociniPanel.add(dataChooser);
+                        JButton btnInserisci = new JButton("Inserisci");
+                        btnInserisci.addActionListener(e5->{
+                            try{
+                                if(controller.nuovoTirocinioEsterno((Docente) utente, nomeTextField.getText(), descrizioneTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault()),nomeAziendaTextField.getText(),referenteTextField.getText()))
+                                    stato.setText("Inserito correttamente");
+                                else
+                                    stato.setText("Non inserito correttamente");
+                            }
+                            catch(NullPointerException ex){
+                                stato.setText("Inserimento vuoto, non inserito correttamente");
+                                handleNullPointerException(ex);
+                            }
+                        });
                         JButton btnIndietro = new JButton(back);
                         btnIndietro.addActionListener(e2 -> {
                             docenteFrame.remove(tirociniPanel);
                             docenteFrame.setContentPane(p);
                             docenteFrame.setVisible(true);
                         });
+                        tirociniPanel.add(btnInserisci);
                         tirociniPanel.add(btnIndietro);
+                        tirociniPanel.add(stato);
                         docenteFrame.setContentPane(tirociniPanel);
                         docenteFrame.setVisible(true);
 
@@ -164,6 +197,7 @@ public class SecondHomework {
                     p.add(btnNewTirocinio);
                     p.add(btnNewTirocinioEsterno);
                     docenteFrame.setContentPane(p);
+                    docenteFrame.setSize(650,400);
                     docenteFrame.setVisible(true);
                     for (Component x : getComponents(panel)) {
                         x.setEnabled(false);
@@ -186,24 +220,38 @@ public class SecondHomework {
         studenteBtn.addActionListener(e -> {
 
             // Salvataggio valori in variabili
-            String mail = loginField.getText();
+            String login = loginField.getText();
 
             // Password da JPasswordField
             String password = new String(passwordField.getPassword());
 
             // Stampa di prova
-            System.out.println("MAIL: " + mail);
+            System.out.println("LOGIN: " + login);
             System.out.println("PASSWORD: " + password);
 
             JFrame studenteFrame = new JFrame("Finestra Studente");
             studenteFrame.setSize(300, 200);
             studenteFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-            JPanel p = new JPanel();
-            p.add(new JLabel("Benvenuto Studente"));
-
-            studenteFrame.setContentPane(p);
-            studenteFrame.setVisible(true);
+            try {
+                utente=controller.login(login,password,true);
+                if(utente!=null){
+                    JPanel p = new JPanel();
+                    p.add(new JLabel("Benvenuto, "+login));
+                    JButton btnLogout = new JButton("Logout");
+                    btnLogout.addActionListener(e2 -> {
+                        try{
+                            controller.logout(utente,true);
+                        } catch (InconsistencyException ex) {
+                            handleInconsistencyException(ex);
+                        }
+                        studenteFrame.dispose();
+                    });
+                    //addrpba
+                }
+            } catch (InconsistencyException ex) {
+                throw new RuntimeException(ex);
+            }
         });
     }
 
