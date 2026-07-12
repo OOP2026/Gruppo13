@@ -2,10 +2,7 @@ package gui;
 
 import com.toedter.calendar.JDateChooser;
 import controller.Controller;
-import model.Docente;
-import model.Studente;
-import model.Tirocinio;
-import model.Utente;
+import model.*;
 import utilities.InconsistencyException;
 
 import javax.swing.*;
@@ -25,7 +22,8 @@ public class SecondHomework {
     private JPasswordField passwordField;
     private JButton docenteBtn;
     private JButton studenteBtn;
-    private Utente utente;
+    private Studente studente;
+    private Docente docente;
     // Source - https://stackoverflow.com/a/16782219
 // Posted by Joel Christophel, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-06-30, License - CC BY-SA 3.0
@@ -71,14 +69,14 @@ public class SecondHomework {
             docenteFrame.setSize(1000, 200);
             docenteFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             try {
-                utente=controller.login(login,password,true);
-                if(utente!=null){
+                docente=(Docente)controller.login(login,password,true);
+                if(docente!=null){
                     JPanel p = new JPanel();
                     p.add(new JLabel("Benvenuto, "+login));
                     JButton btnLogout = new JButton("Logout");
                     btnLogout.addActionListener(e2 -> {
                         try{
-                            controller.logout(utente,true);
+                            controller.logout(docente,true);
                         } catch (InconsistencyException ex) {
                             handleInconsistencyException(ex);
                         }
@@ -93,7 +91,7 @@ public class SecondHomework {
                         tirociniTextArea.setEditable(false);
                         tirociniTextArea.setLineWrap(true);
                         StringBuilder t=new StringBuilder();
-                        for(Tirocinio x : controller.getTirocini(utente,true)){
+                        for(Tirocinio x : controller.getTirocini(docente,true)){
                                 t.append(x.toString());
                         }
                         tirociniTextArea.setText(t.toString());
@@ -124,7 +122,7 @@ public class SecondHomework {
                         JButton btnInserisci = new JButton("Inserisci");
                         btnInserisci.addActionListener(e5->{
                             try{
-                                if(controller.nuovoTirocinioInterno((Docente)utente, nomeTextField.getText(), descrizioneTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault())))
+                                if(controller.nuovoTirocinioInterno(docente, nomeTextField.getText(), descrizioneTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault())))
                                    stato.setText("Inserito correttamente");
                                 else
                                    stato.setText("Non inserito correttamente");
@@ -169,7 +167,7 @@ public class SecondHomework {
                         JButton btnInserisci = new JButton("Inserisci");
                         btnInserisci.addActionListener(e5->{
                             try{
-                                if(controller.nuovoTirocinioEsterno((Docente) utente, nomeTextField.getText(), descrizioneTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault()),nomeAziendaTextField.getText(),referenteTextField.getText()))
+                                if(controller.nuovoTirocinioEsterno(docente, nomeTextField.getText(), descrizioneTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault()),nomeAziendaTextField.getText(),referenteTextField.getText()))
                                     stato.setText("Inserito correttamente");
                                 else
                                     stato.setText("Non inserito correttamente");
@@ -234,20 +232,104 @@ public class SecondHomework {
             studenteFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
             try {
-                utente=controller.login(login,password,true);
-                if(utente!=null){
+                studente=(Studente) controller.login(login,password,false);
+                if(studente!=null){
                     JPanel p = new JPanel();
                     p.add(new JLabel("Benvenuto, "+login));
                     JButton btnLogout = new JButton("Logout");
                     btnLogout.addActionListener(e2 -> {
                         try{
-                            controller.logout(utente,true);
+                            controller.logout(studente,false);
                         } catch (InconsistencyException ex) {
                             handleInconsistencyException(ex);
                         }
                         studenteFrame.dispose();
                     });
-                    //addrpba
+                    //roba
+                    JButton btnAllTirocinio = new JButton("Mostra tirocini");
+                    btnAllTirocinio.addActionListener(e3->{
+                        JPanel tirociniPanel = new JPanel();
+                        tirociniPanel.add(new JLabel("Lista Tirocini"));
+                        JTextArea tirociniTextArea = new JTextArea();
+                        tirociniTextArea.setSize(600, 200);
+                        tirociniTextArea.setEditable(false);
+                        tirociniTextArea.setLineWrap(true);
+                        StringBuilder t=new StringBuilder();
+                        for(Tirocinio x : controller.getTirocini(studente,false)){
+                            t.append(x.toString());
+                        }
+                        tirociniTextArea.setText(t.toString());
+                        tirociniPanel.add(new JScrollPane(tirociniTextArea));
+                        JButton btnIndietro = new JButton(back);
+                        btnIndietro.addActionListener(e2 -> {
+                            studenteFrame.remove(tirociniPanel);
+                            studenteFrame.setContentPane(p);
+                            studenteFrame.setVisible(true);
+                        });
+                        tirociniPanel.add(btnIndietro);
+                        studenteFrame.setContentPane(tirociniPanel);
+                        studenteFrame.setVisible(true);
+                    });
+                    JButton btnNewRicheista = new JButton("Inserisci richiesta");
+                    btnNewRicheista.addActionListener(e3-> {
+                        JLabel stato = new JLabel("Stato inserimento..");
+                        JPanel richiestaPanel = new JPanel();
+                        richiestaPanel.add(new JLabel("Nome Tirocinio"));
+                        JTextField nomeTextField = new JTextField(62);
+                        richiestaPanel.add(nomeTextField);
+                        richiestaPanel.add(new JLabel("Login Docente"));
+                        JTextField loginTextField = new JTextField(62);
+                        richiestaPanel.add(loginTextField);
+                        JDateChooser dataChooser = new JDateChooser();
+                        richiestaPanel.add(new JLabel("Data Tirocinio"));
+                        richiestaPanel.add(dataChooser);
+                        JButton btnInserisci = new JButton("Inserisci");
+                        btnInserisci.addActionListener(e5 -> {
+                            try {
+                                if (controller.faiRichiesta(studente,controller.cercaTirocinio(nomeTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault()),controller.cercaDocente(loginTextField.getText()))))
+                                    stato.setText("Inserito correttamente");
+                                else
+                                    stato.setText("Non inserito correttamente");
+                            } catch(InconsistencyException exe){
+                                stato.setText("Inserimento impossibile,errore di consistenza dati");
+                                handleInconsistencyException(exe);
+                            }
+                            catch (NullPointerException ex) {
+                                stato.setText("Inserimento vuoto, non inserito correttamente");
+                                handleNullPointerException(ex);
+                            }
+                        });
+                        JButton btnIndietro = new JButton(back);
+                        btnIndietro.addActionListener(e2 -> {
+                            studenteFrame.remove(richiestaPanel);
+                            studenteFrame.setContentPane(p);
+                            studenteFrame.setVisible(true);
+                        });
+                        richiestaPanel.add(btnInserisci);
+                        richiestaPanel.add(btnIndietro);
+                        richiestaPanel.add(stato);
+                        studenteFrame.setContentPane(richiestaPanel);
+                        studenteFrame.setVisible(true);
+
+                    });
+                    //endroba
+                    p.add(btnLogout);
+                    p.add(btnAllTirocinio);
+                    p.add(btnNewRicheista);
+                    studenteFrame.setContentPane(p);
+                    studenteFrame.setSize(650,400);
+                    studenteFrame.setVisible(true);
+                    for (Component x : getComponents(panel)) {
+                        x.setEnabled(false);
+                    }
+                    studenteFrame.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosed(WindowEvent e) {
+                            for (Component x : getComponents(panel)) {
+                                x.setEnabled(true);
+                            }
+                        }
+                    });
                 }
             } catch (InconsistencyException ex) {
                 throw new RuntimeException(ex);

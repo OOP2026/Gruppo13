@@ -36,6 +36,9 @@ public class ConnessioneDatabase {
         catch (SQLException e) {
             throw e;
         }
+        finally {
+            conn.close();
+        }
     }
     public void closeStatement() throws SQLException {
         statement.close();

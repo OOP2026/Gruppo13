@@ -71,8 +71,9 @@ public class Controller {
 			}
 			x.close();
 			getInstance().closeStatement();
+			getInstance().closeConn();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			handleSQLException(e);
 			throw new InconsistencyException("Fallimento nella presa del db dei dati, impossibile inizializzare localmente");
 		}
 	}
@@ -93,22 +94,24 @@ public class Controller {
 			try {
 				if(isDocente&&Boolean.TRUE.equals(!docenteDao.login(login,password, getInstance())))
 					throw new InconsistencyException("Docente trovato in locale e non in db");
-				else if(!isDocente&&Boolean.TRUE.equals(!studenteDao.login(login,password, getInstance())))
+				else if(!isDocente&& Boolean.TRUE.equals(!studenteDao.login(login, password, getInstance())))
 					throw new InconsistencyException("Studente trovato in locale e non in db");
 			}
 			catch (SQLException e) {
 				handleSQLException(e);
 			}
+
 		return log;
 	}
-	public boolean logout(Utente u, boolean isDocente)throws InconsistencyException {
-		boolean x = false;
+	public void logout(Utente u, boolean isDocente)throws InconsistencyException {
+		boolean x;
 		try {
 			u.logOut();
 			if (isDocente)
 				x = docenteDao.logout(u.getLogin(), getInstance());
 			else
 				x = studenteDao.logout(u.getLogin(), getInstance());
+			getInstance().closeConn();
 			if (!x)
 				throw new InconsistencyException("Docente logout in locale ma non in db");
 		} catch (NullPointerException e) {
@@ -116,7 +119,6 @@ public class Controller {
 		} catch (SQLException e) {
 			handleSQLException(e);
 		}
-		return x;
 	}
 
 	public String vediTirocini(Utente user, boolean isDocente){
@@ -130,7 +132,7 @@ public class Controller {
 	public List<Tirocinio> getTirocini(Utente user,boolean isDocente){
 		ArrayList<Tirocinio> t=new ArrayList<>();
 		for(Tirocinio x:tirocini){
-			if(isDocente||x.getRelatore().equals(user))
+			if(!isDocente||x.getRelatore().equals(user))
 				t.add(x);
 		}
 		return t;
@@ -142,6 +144,7 @@ public class Controller {
 		try {
 			if (Boolean.TRUE.equals(docenteDao.aggiungiTirocinio(docente.getLogin(),nome, descrizione, data,nomeAzienda,referente, getInstance())))
 				tirocini.add(x);
+			getInstance().closeConn();
 		}
 		catch (SQLException e){
 			handleSQLException(e);
@@ -161,6 +164,10 @@ public class Controller {
 		} catch (NullPointerException ex){
 			handleNullPointerException(ex);
 		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
+		}
 		return false;
 	}
 
@@ -171,6 +178,7 @@ public class Controller {
 				richieste.add(r);
 				return true;
 			}
+			getInstance().closeConn();
 		}
 		catch(SQLException e){
 			handleSQLException(e);
@@ -205,6 +213,10 @@ public class Controller {
 			catch(SQLException e){
 				handleSQLException(e);
 			}
+			finally {
+				try{getInstance().closeConn();}
+				catch(SQLException e){ handleSQLException(e);}
+			}
 			return false;
 	}
 	//MAY BE NULL
@@ -228,6 +240,10 @@ public class Controller {
 		} catch(NullPointerException ex){
 			handleNullPointerException(ex);
 		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
+		}
 		return false;
 	}
 	//MAY BE NULL
@@ -245,6 +261,10 @@ public class Controller {
             handleSQLException(e);
         } catch (NullPointerException ex){
 			handleNullPointerException(ex);
+		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
 		}
         return false;
 	}
@@ -269,6 +289,10 @@ public class Controller {
 		catch(SQLException e){
 			handleSQLException(e);
 		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
+		}
 		return tirocinio;
 	}
 	//MAY BE NULL
@@ -280,16 +304,20 @@ public class Controller {
 			}
 		}
 		try{
-			ResultSet x=docenteDao.queryViaUtente("SELECT * FROM Studente WHERE login = '"+login+"';",getInstance());
-			if(x.next()) {
-				if (s == null)
-					throw new InconsistencyException("Docente presente nel db e non in locale");
-			}
-			else if (s!=null)
-				throw new InconsistencyException("Docente presente in locale e non nel db");
-		}
+            try (ResultSet x = docenteDao.queryViaUtente("SELECT * FROM Studente WHERE login = '" + login + "';", getInstance())) {
+                if (x.next()) {
+                    if (s == null)
+                        throw new InconsistencyException("Docente presente nel db e non in locale");
+                } else if (s != null)
+                    throw new InconsistencyException("Docente presente in locale e non nel db");
+            }
+        }
 		catch (SQLException e){
 			handleSQLException(e);
+		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
 		}
 		return s;
 	}
@@ -302,18 +330,22 @@ public class Controller {
 			}
 		}
 		try{
-			ResultSet x=docenteDao.queryViaUtente("SELECT *FROM Docente WHERE login = '"+login+"';",getInstance());
-			if(x.next()) {
-				if (docente != null)
-					return docente;
-				else
-					throw new InconsistencyException("Docente presente nel db e non in locale");
-			}
-			else if (docente!=null)
-				throw new InconsistencyException("Docente presente in locale e non nel db");
-		}
+            try (ResultSet x = docenteDao.queryViaUtente("SELECT *FROM Docente WHERE login = '" + login + "';", getInstance())) {
+                if (x.next()) {
+                    if (docente != null)
+                        return docente;
+                    else
+                        throw new InconsistencyException("Docente presente nel db e non in locale");
+                } else if (docente != null)
+                    throw new InconsistencyException("Docente presente in locale e non nel db");
+            }
+        }
 		catch (SQLException e){
 			handleSQLException(e);
+		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
 		}
 		return docente;
 	}
@@ -326,18 +358,22 @@ public class Controller {
 
 		}
 		try{
-			ResultSet x =richiestaDao.queryViaRichiesta("SELECT * FROM Richiesta WHERE Login='"+studente.getLogin()+"' AND ID_Ti =(SELECT ID_Ti FROM Tirocinio WHERE Nome = '"+tirocinio.getNome()+"' AND Data = '"+tirocinio.getData()+"' AND Login = '"+tirocinio.getRelatore().getLogin()+"');",getInstance());
-			if(x.next()){
-				if(richiesta!=null)
-					return richiesta;
-				else
-					throw new InconsistencyException("Richiesta presente nel db ma non in locale");
-			}
-			else if(richiesta!=null)
-				throw new InconsistencyException("Richiesta presente in locale e non nel db");
-		}
+            try (ResultSet x = richiestaDao.queryViaRichiesta("SELECT * FROM Richiesta WHERE Login='" + studente.getLogin() + "' AND ID_Ti =(SELECT ID_Ti FROM Tirocinio WHERE Nome = '" + tirocinio.getNome() + "' AND Data = '" + tirocinio.getData() + "' AND Login = '" + tirocinio.getRelatore().getLogin() + "');", getInstance())) {
+                if (x.next()) {
+                    if (richiesta != null)
+                        return richiesta;
+                    else
+                        throw new InconsistencyException("Richiesta presente nel db ma non in locale");
+                } else if (richiesta != null)
+                    throw new InconsistencyException("Richiesta presente in locale e non nel db");
+            }
+        }
 		catch(SQLException e){
 			handleSQLException(e);
+		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
 		}
 		return null;
 	}
@@ -362,6 +398,10 @@ public class Controller {
 		catch(SQLException e){
 			handleSQLException(e);
 		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
+		}
 		return null;
 	}
 	//MAY BE NULL
@@ -372,18 +412,22 @@ public class Controller {
 				seduta = x;
 		}
 		try{
-			ResultSet x=sedutaDao.queryViaSeduta("SELECT TOP 1 FROM Seduta WHERE ID_Te=(SELECT ID_Te FROM Tesi WHERE ID_Ri=(SELECT ID_Ri FROM Richiesta WHERE Login='"+tesi.getRichiesta().getStudente().getLogin()+"' AND ID_Ti = (Select ID_Ti FROM Tirocinio WHERE Nome = '"+tesi.getRichiesta().getTirocinio().getNome()+"' AND Data = '"+tesi.getRichiesta().getTirocinio().getData()+"' AND Login = '"+tesi.getRichiesta().getTirocinio().getRelatore().getLogin()+"')));",getInstance());
-			if(x.next()){
-				if (seduta!=null)
-					return seduta;
-				else
-					throw new InconsistencyException("Seduta presente nel db e non in locale");
-			}
-			else if (seduta!=null)
-				throw new InconsistencyException("Seduta presente in locale e non nel db");
-		}
+            try (ResultSet x = sedutaDao.queryViaSeduta("SELECT TOP 1 FROM Seduta WHERE ID_Te=(SELECT ID_Te FROM Tesi WHERE ID_Ri=(SELECT ID_Ri FROM Richiesta WHERE Login='" + tesi.getRichiesta().getStudente().getLogin() + "' AND ID_Ti = (Select ID_Ti FROM Tirocinio WHERE Nome = '" + tesi.getRichiesta().getTirocinio().getNome() + "' AND Data = '" + tesi.getRichiesta().getTirocinio().getData() + "' AND Login = '" + tesi.getRichiesta().getTirocinio().getRelatore().getLogin() + "')));", getInstance())) {
+                if (x.next()) {
+                    if (seduta != null)
+                        return seduta;
+                    else
+                        throw new InconsistencyException("Seduta presente nel db e non in locale");
+                } else if (seduta != null)
+                    throw new InconsistencyException("Seduta presente in locale e non nel db");
+            }
+        }
 		catch(SQLException e){
 			handleSQLException(e);
+		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
 		}
 		return null;
 	}
@@ -399,6 +443,10 @@ public class Controller {
 		}
 		catch (SQLException e){
 			handleSQLException(e);
+		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
 		}
 		return false;
 	}
@@ -419,6 +467,10 @@ public class Controller {
 		}
 		catch(NullPointerException e){
 			handleNullPointerException(e);
+		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
 		}
 		return false;
 	}
@@ -441,6 +493,10 @@ public class Controller {
 		catch(NullPointerException e){
 			handleNullPointerException(e);
 		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
+		}
 		return false;
 	}
 
@@ -451,10 +507,9 @@ public class Controller {
 
 	public List<Seduta> getSedutaDiLaurea(Utente u, boolean isDocente){
 		ArrayList<Seduta> lista = new ArrayList<>();
-		for(Seduta x:sedute){
-			if(isDocente&&x.getDocente().equals(u)||!isDocente)
-				lista.add(x);
-		}
+		for(Seduta x:sedute)
+            if (!isDocente || x.getDocente().equals(u))
+                lista.add(x);
 		return lista;
 	}
 
@@ -476,18 +531,22 @@ public class Controller {
 			}
 
 		try{
-			ResultSet x =sedutaDao.queryViaSeduta("SELECT TOP 1 FROM Seduta WHERE Login='"+d.getLogin()+"' AND Data = '"+data+"' AND Ora = '"+ora+"');",getInstance());
-			if(x.next()){
-				if(seduta!=null)
-					return seduta;
-				else
-					throw new InconsistencyException("Seduta presente nel db ma non in locale");
-			}
-			else if(seduta!=null)
-				throw new InconsistencyException("Seduta presente in locale e non nel db");
-		}
+            try (ResultSet x = sedutaDao.queryViaSeduta("SELECT TOP 1 FROM Seduta WHERE Login='" + d.getLogin() + "' AND Data = '" + data + "' AND Ora = '" + ora + "');", getInstance())) {
+                if (x.next()) {
+                    if (seduta != null)
+                        return seduta;
+                    else
+                        throw new InconsistencyException("Seduta presente nel db ma non in locale");
+                } else if (seduta != null)
+                    throw new InconsistencyException("Seduta presente in locale e non nel db");
+            }
+        }
 		catch(SQLException e){
 			handleSQLException(e);
+		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
 		}
 		return null;
 	}
@@ -499,6 +558,10 @@ public class Controller {
 		catch(SQLException e){
 			handleSQLException(e);
 		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
+		}
 		return false;
 	}
 	public Boolean inserisciVotoSedutaDiLaurea(Docente d,Seduta s,int voto){
@@ -508,6 +571,10 @@ public class Controller {
 		}
 		catch (SQLException e){
 			handleSQLException(e);
+		}
+		finally {
+			try{getInstance().closeConn();}
+			catch(SQLException e){ handleSQLException(e);}
 		}
 		return false;
 	}
