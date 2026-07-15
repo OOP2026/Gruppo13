@@ -27,10 +27,6 @@ public class SecondHomework {
     private JButton studenteBtn;
     private Studente studente;
     private Docente docente;
-    // Source - https://stackoverflow.com/a/16782219
-// Posted by Joel Christophel, modified by community. See post 'Timeline' for change history
-// Retrieved 2026-06-30, License - CC BY-SA 3.0
-
     private Component[] getComponents(Component container) {
         ArrayList<Component> list;
 
@@ -329,6 +325,18 @@ public class SecondHomework {
                                 handleNullPointerException(ex);
                             }
                         });
+                        JButton btnIndietro = new JButton(back);
+                        btnIndietro.addActionListener(e2 -> {
+                            docenteFrame.remove(sedutaPanel);
+                            docenteFrame.setContentPane(p);
+                            docenteFrame.setVisible(true);
+                        });
+                        sedutaPanel.add(btnInserisci);
+                        sedutaPanel.add(btnIndietro);
+                        sedutaPanel.add(stato);
+                        docenteFrame.setContentPane(sedutaPanel);
+                        docenteFrame.setVisible(true);
+                    });
                         p.add(btnLogout);
                         p.add(btnAllTirocinio);
                         p.add(btnNewTirocinio);
@@ -350,7 +358,6 @@ public class SecondHomework {
                                 }
                             }
                         });
-                    });
                 }
             } catch (InconsistencyException ex) {
                 throw new RuntimeException(ex);
@@ -524,12 +531,70 @@ public class SecondHomework {
                         studenteFrame.setVisible(true);
 
                     });
+                    JButton btnPrenotaSeduta = new JButton("Prenota Seduta");
+                    btnPrenotaSeduta.addActionListener(e3-> {
+                        JLabel stato = new JLabel("Stato inserimento..");
+                        JPanel sedutaPanel = new JPanel();
+                        sedutaPanel.add(new JLabel("Nome Tirocinio"));
+                        JTextField nomeTextField = new JTextField(62);
+                        sedutaPanel.add(nomeTextField);
+                        sedutaPanel.add(new JLabel("Login Docente"));
+                        JTextField loginTextField = new JTextField(62);
+                        sedutaPanel.add(loginTextField);
+                        JDateChooser dataChooser = new JDateChooser();
+                        sedutaPanel.add(new JLabel("Data Tirocinio"));
+                        sedutaPanel.add(dataChooser);
+                        JDateChooser dateChooser = new JDateChooser();
+                        sedutaPanel.add(new JLabel("Data Seduta"));
+                        sedutaPanel.add(dateChooser);
+                        SpinnerDateModel timeModel = new SpinnerDateModel();
+                        JSpinner timeSpinner = new JSpinner(timeModel);
+                        JSpinner.DateEditor editor = new JSpinner.DateEditor(timeSpinner, "HH:mm");
+                        timeSpinner.setEditor(editor);
+                        timeModel.setCalendarField(Calendar.MINUTE);
+                        sedutaPanel.add(timeSpinner);
+                        JButton btnInserisci = new JButton("Inserisci");
+                        btnInserisci.addActionListener(e5 -> {
+                            try {
+                                Docente docentetemp=controller.cercaDocente(loginTextField.getText());
+                                Date dateValue = (Date) timeSpinner.getValue();
+                                LocalTime localTime = dateValue.toInstant()
+                                        .atZone(ZoneId.systemDefault())
+                                        .toLocalTime();
+                                if (Boolean.TRUE.equals(controller.prenotaSedutaDiLaurea(studente,controller.cercaSeduta(docentetemp, LocalDate.ofInstant(dateChooser.getDate().toInstant(), ZoneId.systemDefault()),localTime),controller.cercaTesi(controller.cercaRichiesta(studente,controller.cercaTirocinio(nomeTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault()),docentetemp)))))) {
+                                    stato.setText("Inserito correttamente");
+                                }
+                                else
+                                    stato.setText("Non inserito correttamente");
+                            } catch(InconsistencyException exe){
+                                stato.setText("Inserimento impossibile,errore di consistenza dati");
+                                handleInconsistencyException(exe);
+                            }
+                            catch (NullPointerException ex) {
+                                stato.setText("Inserimento vuoto, non inserito correttamente");
+                                handleNullPointerException(ex);
+                            }
+                        });
+                        JButton btnIndietro = new JButton(back);
+                        btnIndietro.addActionListener(e2 -> {
+                            studenteFrame.remove(sedutaPanel);
+                            studenteFrame.setContentPane(p);
+                            studenteFrame.setVisible(true);
+                        });
+                        sedutaPanel.add(btnInserisci);
+                        sedutaPanel.add(btnIndietro);
+                        sedutaPanel.add(stato);
+                        studenteFrame.setContentPane(sedutaPanel);
+                        studenteFrame.setVisible(true);
+
+                    });
                     //endroba
                     p.add(btnLogout);
                     p.add(btnAllTirocinio);
                     p.add(btnNewRicheista);
                     p.add(btnViewRichieste);
                     p.add(btnAggiungiTesi);
+                    p.add(btnPrenotaSeduta);
                     studenteFrame.setContentPane(p);
                     studenteFrame.setSize(650,400);
                     studenteFrame.setVisible(true);
