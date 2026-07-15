@@ -54,14 +54,14 @@ public class Controller {
 			getInstance().closeStatement();
 			x=richiestaDao.getAll(getInstance());
 			while(x.next()){
-				Richiesta r = new Richiesta(x.getDate(2).toLocalDate(),cercaStudente(x.getString(login)),cercaTirocinio(x.getString("nome"),x.getDate(9).toLocalDate(),cercaDocente(x.getString(login))));
+				Richiesta r = new Richiesta(x.getDate(2).toLocalDate(),cercaStudente(x.getString(login)),cercaTirocinio(x.getString("nome"),x.getDate(9).toLocalDate(),cercaDocente(x.getString(login))),x.getString("stato").toCharArray()[0]);
 				richieste.add(r);
 			}
 			x.close();
 			getInstance().closeStatement();
 			x=tesiDao.getAll(getInstance());
 			while(x.next()){
-				tesi.add(new Tesi(x.getString("contenuto"),cercaRichiesta(cercaStudente(x.getString(8)),cercaTirocinio(x.getString(12),x.getDate(13).toLocalDate(),cercaDocente(x.getString(14))))));
+				tesi.add(new Tesi(x.getString("contenuto"),cercaRichiesta(cercaStudente(x.getString(8)),cercaTirocinio(x.getString(12),x.getDate(13).toLocalDate(),cercaDocente(x.getString(14)))),x.getString(2).toCharArray()[0]));
 			}
 			x.close();
 			getInstance().closeStatement();

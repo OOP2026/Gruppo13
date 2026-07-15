@@ -1,13 +1,19 @@
 package model;
 
 public class Tesi {
-    private char stato='?';
+    private char stato;
     private String contenuto;
     private Richiesta richiesta;
 
     public Tesi(String contenuto,Richiesta richiesta){
         this.contenuto = contenuto;
         this.richiesta = richiesta;
+        stato='?';
+    }
+    public Tesi(String contenuto,Richiesta richiesta,char stato){
+        this.contenuto = contenuto;
+        this.richiesta = richiesta;
+        this.stato=stato;
     }
 
     public char getStato() {

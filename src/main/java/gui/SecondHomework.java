@@ -190,10 +190,124 @@ public class SecondHomework {
                         docenteFrame.setVisible(true);
 
                     });
+                    JButton btnModificaStatoRichiesta = new JButton("Modifica stato richiesta");
+                    btnModificaStatoRichiesta.addActionListener(e3->{
+                        JPanel richiestaPanel = new JPanel();
+                        JLabel stato=new JLabel("Stato modifica..");
+                        richiestaPanel.add(new JLabel("Nome"));
+                        JTextField nomeTextField = new JTextField(62);
+                        richiestaPanel.add(nomeTextField);
+                        richiestaPanel.add(new JLabel("Login Studente"));
+                        JTextField loginTextField = new JTextField(62);
+                        richiestaPanel.add(loginTextField);
+                        JDateChooser dataChooser = new JDateChooser();
+                        richiestaPanel.add(new JLabel("Data Tirocinio"));
+                        richiestaPanel.add(dataChooser);
+                        JButton btnAccetta = new JButton("Accetta");
+                        btnAccetta.addActionListener(e5->{
+                            try{
+                                if(controller.modificaStatoRichiesta(docente,controller.cercaRichiesta(controller.cercaStudente(loginTextField.getText()),controller.cercaTirocinio(nomeTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault()),docente)),true))
+                                    stato.setText("Modificato correttamente");
+                                else
+                                    stato.setText("Non modificato correttamente");
+                            }
+                            catch(NullPointerException ex){
+                                stato.setText("Non modificato correttamente, dati non corretti");
+                                handleNullPointerException(ex);
+                            } catch (InconsistencyException ex) {
+                                stato.setText("Non modificato correttamente,errore di consistenza dati");
+                            }
+                        });
+                        JButton btnRifiuta = new JButton("Rifiuta");
+                        btnRifiuta.addActionListener(e5->{
+                            try{
+                                if(controller.modificaStatoRichiesta(docente,controller.cercaRichiesta(controller.cercaStudente(loginTextField.getText()),controller.cercaTirocinio(nomeTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault()),docente)),false))
+                                    stato.setText("Modificato correttamente");
+                                else
+                                    stato.setText("Non modificato correttamente");
+                            }
+                            catch(NullPointerException ex){
+                                stato.setText("Non modificato correttamente, dati non corretti");
+                                handleNullPointerException(ex);
+                            } catch (InconsistencyException ex) {
+                                stato.setText("Non modificato correttamente,errore di consistenza dati");
+                            }
+                        });
+                        JButton btnIndietro = new JButton(back);
+                        btnIndietro.addActionListener(e2 -> {
+                            docenteFrame.remove(richiestaPanel);
+                            docenteFrame.setContentPane(p);
+                            docenteFrame.setVisible(true);
+                        });
+                        richiestaPanel.add(btnAccetta);
+                        richiestaPanel.add(btnRifiuta);
+                        richiestaPanel.add(btnIndietro);
+                        richiestaPanel.add(stato);
+                        docenteFrame.setContentPane(richiestaPanel);
+                        docenteFrame.setVisible(true);
+                    });
+                    JButton btnModificaStatoTesi = new JButton("Modifica stato tesi");
+                    btnModificaStatoTesi.addActionListener(e3->{
+                        JPanel tesiPanel = new JPanel();
+                        JLabel stato=new JLabel("Stato modifica..");
+                        tesiPanel.add(new JLabel("Nome"));
+                        JTextField nomeTextField = new JTextField(62);
+                        tesiPanel.add(nomeTextField);
+                        tesiPanel.add(new JLabel("Login Studente"));
+                        JTextField loginTextField = new JTextField(62);
+                        tesiPanel.add(loginTextField);
+                        JDateChooser dataChooser = new JDateChooser();
+                        tesiPanel.add(new JLabel("Data Tirocinio"));
+                        tesiPanel.add(dataChooser);
+                        JButton btnAccetta = new JButton("Accetta");
+                        btnAccetta.addActionListener(e5->{
+                            try{
+                                if(controller.modificaStatoTesi(docente,controller.cercaTesi(controller.cercaRichiesta(controller.cercaStudente(loginTextField.getText()),controller.cercaTirocinio(nomeTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault()),docente))),true))
+                                    stato.setText("Modificato correttamente");
+                                else
+                                    stato.setText("Non modificato correttamente");
+                            }
+                            catch(NullPointerException ex){
+                                stato.setText("Non modificato correttamente, dati non corretti");
+                                handleNullPointerException(ex);
+                            } catch (InconsistencyException ex) {
+                                stato.setText("Non modificato correttamente,errore di consistenza dati");
+                            }
+                        });
+                        JButton btnRifiuta = new JButton("Rifiuta");
+                        btnRifiuta.addActionListener(e5->{
+                            try{
+                                if(controller.modificaStatoTesi(docente,controller.cercaTesi(controller.cercaRichiesta(controller.cercaStudente(loginTextField.getText()),controller.cercaTirocinio(nomeTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault()),docente))),false))
+                                    stato.setText("Modificato correttamente");
+                                else
+                                    stato.setText("Non modificato correttamente");
+                            }
+                            catch(NullPointerException ex){
+                                stato.setText("Non modificato correttamente, dati non corretti");
+                                handleNullPointerException(ex);
+                            } catch (InconsistencyException ex) {
+                                stato.setText("Non modificato correttamente,errore di consistenza dati");
+                            }
+                        });
+                        JButton btnIndietro = new JButton(back);
+                        btnIndietro.addActionListener(e2 -> {
+                            docenteFrame.remove(tesiPanel);
+                            docenteFrame.setContentPane(p);
+                            docenteFrame.setVisible(true);
+                        });
+                        tesiPanel.add(btnAccetta);
+                        tesiPanel.add(btnRifiuta);
+                        tesiPanel.add(btnIndietro);
+                        tesiPanel.add(stato);
+                        docenteFrame.setContentPane(tesiPanel);
+                        docenteFrame.setVisible(true);
+                    });
                     p.add(btnLogout);
                     p.add(btnAllTirocinio);
                     p.add(btnNewTirocinio);
                     p.add(btnNewTirocinioEsterno);
+                    p.add(btnModificaStatoRichiesta);
+                    p.add(btnModificaStatoTesi);
                     docenteFrame.setContentPane(p);
                     docenteFrame.setSize(650,400);
                     docenteFrame.setVisible(true);
@@ -312,10 +426,81 @@ public class SecondHomework {
                         studenteFrame.setVisible(true);
 
                     });
+                    JButton btnViewRichieste= new JButton("Visualizza richieste");
+                    btnViewRichieste.addActionListener(e4->{
+                        JPanel richiestaPanel = new JPanel();
+                        richiestaPanel.add(new JLabel("Lista richieste"));
+                        JTextArea richiestaTextArea = new JTextArea();
+                        richiestaTextArea.setSize(600, 200);
+                        richiestaTextArea.setEditable(false);
+                        richiestaTextArea.setLineWrap(true);
+                        StringBuilder t=new StringBuilder();
+                        for(Richiesta x : controller.getRichiesta(studente,false)){
+                             t.append(x.toString());
+                        }
+                        richiestaTextArea.setText(t.toString());
+                        richiestaPanel.add(new JScrollPane(richiestaTextArea));
+                        JButton btnIndietro = new JButton(back);
+                        btnIndietro.addActionListener(e2 -> {
+                            studenteFrame.remove(richiestaPanel);
+                            studenteFrame.setContentPane(p);
+                            studenteFrame.setVisible(true);
+                       });
+                       richiestaPanel.add(btnIndietro);
+                       studenteFrame.setContentPane(richiestaPanel);
+                       studenteFrame.setVisible(true);
+                    });
+                    JButton btnAggiungiTesi = new JButton("Aggiungi tesi");
+                    btnAggiungiTesi.addActionListener(e3-> {
+                        JLabel stato = new JLabel("Stato inserimento..");
+                        JPanel tesiPanel = new JPanel();
+                        tesiPanel.add(new JLabel("Nome Tirocinio"));
+                        JTextField nomeTextField = new JTextField(62);
+                        tesiPanel.add(nomeTextField);
+                        tesiPanel.add(new JLabel("Login Docente"));
+                        JTextField loginTextField = new JTextField(62);
+                        tesiPanel.add(loginTextField);
+                        JDateChooser dataChooser = new JDateChooser();
+                        tesiPanel.add(new JLabel("Contenuto tesi"));
+                        JTextField contenutoTextField = new JTextField(62);
+                        tesiPanel.add(contenutoTextField);
+                        tesiPanel.add(new JLabel("Data Tirocinio"));
+                        tesiPanel.add(dataChooser);
+                        JButton btnInserisci = new JButton("Inserisci");
+                        btnInserisci.addActionListener(e5 -> {
+                            try {
+                                if (controller.aggiungiTesi(studente,controller.cercaRichiesta(studente,controller.cercaTirocinio(nomeTextField.getText(), LocalDate.ofInstant(dataChooser.getDate().toInstant(), ZoneId.systemDefault()),controller.cercaDocente(loginTextField.getText()))),contenutoTextField.getText()))
+                                    stato.setText("Inserito correttamente");
+                                else
+                                    stato.setText("Non inserito correttamente");
+                            } catch(InconsistencyException exe){
+                                stato.setText("Inserimento impossibile,errore di consistenza dati");
+                                handleInconsistencyException(exe);
+                            }
+                            catch (NullPointerException ex) {
+                                stato.setText("Inserimento vuoto, non inserito correttamente");
+                                handleNullPointerException(ex);
+                            }
+                        });
+                        JButton btnIndietro = new JButton(back);
+                        btnIndietro.addActionListener(e2 -> {
+                            studenteFrame.remove(tesiPanel);
+                            studenteFrame.setContentPane(p);
+                            studenteFrame.setVisible(true);
+                        });
+                        tesiPanel.add(btnInserisci);
+                        tesiPanel.add(btnIndietro);
+                        tesiPanel.add(stato);
+                        studenteFrame.setContentPane(tesiPanel);
+                        studenteFrame.setVisible(true);
+
+                    });
                     //endroba
                     p.add(btnLogout);
                     p.add(btnAllTirocinio);
                     p.add(btnNewRicheista);
+                    p.add(btnViewRichieste);
+                    p.add(btnAggiungiTesi);
                     studenteFrame.setContentPane(p);
                     studenteFrame.setSize(650,400);
                     studenteFrame.setVisible(true);
