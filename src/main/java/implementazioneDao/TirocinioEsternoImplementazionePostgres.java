@@ -45,6 +45,8 @@ public class TirocinioEsternoImplementazionePostgres extends TirocinioImplementa
         }
         return null;
     }
+
+    @Override
     public ResultSet getAll(ConnessioneDatabase conn){
         try{
             return conn.executeQuery("SELECT * FROM Tirocinio NATURAL JOIN TirocinioEsterno");
